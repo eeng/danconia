@@ -29,7 +29,7 @@ module ActsAsMoney
     end  
     
     def to_s
-      "$%.#{@decimals}f" % @amount
+      ActiveSupport::NumberHelper.number_to_currency to_d
     end
 
     def inspect
