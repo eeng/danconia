@@ -14,7 +14,7 @@ module ActsAsMoney
     def test_rounding_persisted
       assert_equal 0.67, Product.create(tax: 2.0/3.0).reload.tax
     end
-    
+
     def test_nils
       assert_nil Product.new(price: nil).price
     end
@@ -23,12 +23,12 @@ module ActsAsMoney
       assert_equal 10, Product.new(price: 10).price
       assert_equal 10.24, Product.new(price: "10.235").price
     end
-    
+
     def test_should_use_bigdecimal
       assert_equal BigDecimal, Product.new(price: 1).price.amount.class
       assert_equal Money, Product.new(price: 1).price.class
     end
-    
+
     def test_should_use_scale_from_column_for_decimales_pieces
       assert_equal 3, Product.new(discount: 2).discount.decimals
       assert_equal 3, Product.create(discount: 2).reload.discount.decimals
@@ -46,11 +46,11 @@ module ActsAsMoney
     def test_rounding_division
       assert_equal 0.67, Product.new(price: 2).price / 3.0
     end
-    
+
     def test_should_return_money
       assert_equal Money, (Product.new(price: 1).price * 2).class
     end
-    
+
     def test_sum_should_return_money
       res = Money.new(3, 4) + Money.new(2, 4)
       assert_equal Money, res.class
@@ -74,9 +74,15 @@ module ActsAsMoney
     def test_when_nil
       assert_equal "$0.00", Money.new(nil).to_s
     end
-    
+
     def test_when_not_null
       assert_equal "$3.25", Money.new(3.25).to_s
+    end
+  end
+
+  class InCentsTest < Minitest::Test
+    def test_should_multiply_by_100_and_round
+      assert_equal 326, Money.new(3.256).in_cents
     end
   end
 end
