@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../test_helper"
+require 'test_helper'
 
 module ActsAsMoney
   class Product < ActiveRecord::Base
@@ -77,6 +77,7 @@ module ActsAsMoney
 
     def test_when_not_null
       assert_equal "$3.25", Money.new(3.25).to_s
+      assert_equal "$3.256", Money.new(3.256, 3).to_s
     end
   end
 
