@@ -33,7 +33,7 @@ module ActsAsMoney
     end
 
     def inspect
-      to_s
+      "#<#{self.class.name} amount: #{amount} decimals: #{decimals}>"
     end
 
     def in_cents

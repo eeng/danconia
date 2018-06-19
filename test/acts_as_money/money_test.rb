@@ -86,4 +86,10 @@ module ActsAsMoney
       assert_equal 326, Money.new(3.256).in_cents
     end
   end
+
+  class InspectTest < Minitest::Test
+    def test_should_contain_class_and_attributes
+      assert_equal '#<ActsAsMoney::Money amount: 10.0 decimals: 3>', Money.new(10, 3).inspect
+    end
+  end
 end
