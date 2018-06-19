@@ -1,9 +1,7 @@
-require 'bundler/gem_tasks'
-require 'rake/testtask'
-Rake::TestTask.new do |t|
-  t.libs << 'lib/acts_as_money'
-  t.libs << 'test'
-  t.test_files = FileList['test/**/*_test.rb']
-  t.verbose = true
+begin
+  require 'rspec/core/rake_task'
+  RSpec::Core::RakeTask.new(:spec)
+rescue LoadError
 end
-task default: :test
+
+task default: :spec

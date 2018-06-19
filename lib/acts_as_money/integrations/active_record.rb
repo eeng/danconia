@@ -1,3 +1,5 @@
+require 'active_record'
+
 module ActsAsMoney
   module Integrations
     module ActiveRecord
