@@ -19,4 +19,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "activerecord", '>= 3.0.0'
   gem.add_development_dependency "sqlite3"
   gem.add_development_dependency "rake"
+  gem.add_development_dependency "guard"
+  gem.add_development_dependency "guard-minitest"
 end
