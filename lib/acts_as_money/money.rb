@@ -1,14 +1,14 @@
 require 'delegate'
 require 'bigdecimal'
-require 'active_support'
 
 module ActsAsMoney
   class Money < DelegateClass(BigDecimal)
-    attr_reader :decimals
+    attr_reader :decimals, :currency
     alias :amount :__getobj__
 
-    def initialize amount, decimals: 2
+    def initialize amount, currency_code = Config.default_currency, decimals: 2
       @decimals = decimals
+      @currency = Currency[currency_code]
       super parse(amount).round(@decimals)
     end
 
@@ -22,11 +22,11 @@ module ActsAsMoney
     end
 
     def to_s
-      ActiveSupport::NumberHelper.number_to_currency amount, precision: @decimals
+      "#{currency.symbol}%.#{decimals}f" % amount
     end
 
     def inspect
-      "#<#{self.class.name} amount: #{amount} decimals: #{decimals}>"
+      "#<#{self.class.name} amount: #{amount} currency: #{currency.code} decimals: #{decimals}>"
     end
 
     def in_cents

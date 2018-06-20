@@ -58,11 +58,22 @@ module ActsAsMoney
       it 'nil should be like zero' do
         expect(Money.new(nil).to_s).to eq '$0.00'
       end
+
+      it 'with other currencies' do
+        with_config do |config|
+          config.available_currencies = [{code: 'EUR', symbol: '€'}, {code: 'JPY', symbol: '¥'}]
+
+          expect(Money.new(1, 'EUR').to_s).to eq '€1.00'
+          expect(Money.new(1, 'JPY').to_s).to eq '¥1.00'
+          expect(Money.new(1, 'OTHER').to_s).to eq '$1.00'
+        end
+      end
     end
 
     context '.inspect' do
       it 'should display the object internals' do
-        expect(Money.new(10.25, decimals: 3).inspect).to eq '#<ActsAsMoney::Money amount: 10.25 decimals: 3>'
+        expect(Money.new(10.25).inspect).to eq '#<ActsAsMoney::Money amount: 10.25 currency: USD decimals: 2>'
+        expect(Money.new(10.25, 'ARS', decimals: 3).inspect).to eq '#<ActsAsMoney::Money amount: 10.25 currency: ARS decimals: 3>'
       end
     end
   end
