@@ -6,7 +6,7 @@ module ActsAsMoney
     attr_reader :decimals, :currency
     alias :amount :__getobj__
 
-    def initialize amount, currency_code = Config.default_currency, decimals: 2
+    def initialize amount, currency_code = ActsAsMoney.config.default_currency, decimals: 2
       @decimals = decimals
       @currency = Currency[currency_code]
       super parse(amount).round(@decimals)

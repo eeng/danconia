@@ -1,14 +1,20 @@
 module ActsAsMoney
+  class << self
+    def config
+      @config ||= Config.new
+    end
+
+    def config= c
+      @config = c
+    end
+  end
+
   class Config
-    @default_currency = 'USD'
-    @available_currencies = []
+    attr_accessor :default_currency, :available_currencies
 
-    class << self
-      attr_accessor :default_currency, :available_currencies
-
-      def to_h
-        instance_variables.inject({}) { |c, var| c[var.to_s[1..-1].to_sym] = instance_variable_get(var); c }
-      end
+    def initialize
+      @default_currency = 'USD'
+      @available_currencies = []
     end
   end
 end
