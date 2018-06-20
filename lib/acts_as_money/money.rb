@@ -7,7 +7,7 @@ module ActsAsMoney
     attr_reader :decimals
     alias :amount :__getobj__
 
-    def initialize amount, decimals = 2
+    def initialize amount, decimals: 2
       @decimals = decimals
       super parse(amount).round(@decimals)
     end
@@ -16,7 +16,7 @@ module ActsAsMoney
       class_eval %Q{
         def #{op} other
           other = parse other
-          Money.new super, decimals
+          Money.new super, decimals: decimals
         end
       }
     end

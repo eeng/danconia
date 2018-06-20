@@ -15,7 +15,7 @@ module ActsAsMoney
 
     context 'arithmetic' do
       it 'addition between Money instances' do
-        res = Money.new(3, 4) + Money.new(2, 4)
+        res = Money.new(3, decimals: 4) + Money.new(2, decimals: 4)
         expect(res).to be_a Money
         expect(res.decimals).to eq 4
         expect(res.amount).to eq 5
@@ -29,7 +29,7 @@ module ActsAsMoney
       it 'multiplication' do
         expect(Money.new(78.55) * 0.25).to eq 19.64
         expect(Money.new(28.5) * 0.15).to eq 4.28
-        expect(Money.new(10.9906, 4) * 1.1).to eq 12.0897
+        expect(Money.new(10.9906, decimals: 4) * 1.1).to eq 12.0897
         expect(Money.new(1) * 2).to be_a Money
       end
 
@@ -52,7 +52,7 @@ module ActsAsMoney
     context 'to_s' do
       it 'should round according to decimals' do
         expect(Money.new(3.25).to_s).to eq '$3.25'
-        expect(Money.new(3.256, 3).to_s).to eq '$3.256'
+        expect(Money.new(3.256, decimals: 3).to_s).to eq '$3.256'
       end
 
       it 'nil should be like zero' do
@@ -62,7 +62,7 @@ module ActsAsMoney
 
     context '.inspect' do
       it 'should display the object internals' do
-        expect(Money.new(10.25, 3).inspect).to eq '#<ActsAsMoney::Money amount: 10.25 decimals: 3>'
+        expect(Money.new(10.25, decimals: 3).inspect).to eq '#<ActsAsMoney::Money amount: 10.25 decimals: 3>'
       end
     end
   end

@@ -12,7 +12,7 @@ module ActsAsMoney
           attr_names.each do |attr_name|
             generator = lambda { |x|
               decimals = columns.detect { |c| c.name == attr_name.to_s }.scale
-              Money.new(x, decimals)
+              Money.new(x, decimals: decimals)
             }
             composed_of attr_name, class_name: 'ActsAsMoney::Money', mapping: [attr_name, :amount],
               allow_nil: true, converter: generator, constructor: generator
