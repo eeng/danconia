@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 
 class Product < ActiveRecord::Base
