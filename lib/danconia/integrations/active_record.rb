@@ -1,6 +1,6 @@
 require 'active_record'
 
-module ActsAsMoney
+module Danconia
   module Integrations
     module ActiveRecord
       def self.included(base)
@@ -14,7 +14,7 @@ module ActsAsMoney
               decimals = columns.detect { |c| c.name == attr_name.to_s }.scale
               Money.new(x, decimals: decimals)
             }
-            composed_of attr_name, class_name: 'ActsAsMoney::Money', mapping: [attr_name, :amount],
+            composed_of attr_name, class_name: 'Danconia::Money', mapping: [attr_name, :amount],
               allow_nil: true, converter: generator, constructor: generator
           end
         end
@@ -23,4 +23,4 @@ module ActsAsMoney
   end
 end
 
-ActiveRecord::Base.send :include, ActsAsMoney::Integrations::ActiveRecord
+ActiveRecord::Base.send :include, Danconia::Integrations::ActiveRecord

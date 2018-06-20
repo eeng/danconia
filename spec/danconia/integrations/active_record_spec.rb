@@ -6,7 +6,7 @@ class Product < ActiveRecord::Base
   money :price, :tax, :discount
 end
 
-module ActsAsMoney
+module Danconia
   describe Integrations::ActiveRecord do
     it 'should convert attributes on instantiation' do
       expect(Product.new(price: 78.55 * 0.25).price).to eq Money.new(19.64)

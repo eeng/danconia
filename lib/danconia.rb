@@ -1,0 +1,5 @@
+require 'danconia/version'
+require 'danconia/config'
+require 'danconia/currency'
+require 'danconia/money'
+require 'danconia/integrations/active_record'

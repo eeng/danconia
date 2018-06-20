@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'acts_as_money/version'
+require 'danconia/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "eeng-money"
-  gem.version       = ActsAsMoney::VERSION
+  gem.version       = Danconia::VERSION
   gem.authors       = ["Emmanuel Nicolau"]
   gem.email         = ["emmanicolau@gmail.com"]
   gem.description   = %q{Single currency money backed by BigDecimal}

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module ActsAsMoney
+module Danconia
   describe Money do
     context 'instantiation' do
       it 'should accept integers and strings' do
@@ -72,8 +72,8 @@ module ActsAsMoney
 
     context '.inspect' do
       it 'should display the object internals' do
-        expect(Money.new(10.25).inspect).to eq '#<ActsAsMoney::Money amount: 10.25 currency: USD decimals: 2>'
-        expect(Money.new(10.25, 'ARS', decimals: 3).inspect).to eq '#<ActsAsMoney::Money amount: 10.25 currency: ARS decimals: 3>'
+        expect(Money.new(10.25).inspect).to eq '#<Danconia::Money amount: 10.25 currency: USD decimals: 2>'
+        expect(Money.new(10.25, 'ARS', decimals: 3).inspect).to eq '#<Danconia::Money amount: 10.25 currency: ARS decimals: 3>'
       end
     end
   end

@@ -1,10 +1,10 @@
-require 'acts_as_money'
+require 'danconia'
 
 module Helpers
   def with_config
-    old_config = ActsAsMoney.config.dup
-    yield ActsAsMoney.config
-    ActsAsMoney.config = old_config
+    old_config = Danconia.config.dup
+    yield Danconia.config
+    Danconia.config = old_config
   end
 end
 

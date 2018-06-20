@@ -1,4 +1,4 @@
-module ActsAsMoney
+module Danconia
   class << self
     def config
       @config ||= Config.new
