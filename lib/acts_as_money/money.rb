@@ -15,7 +15,7 @@ module ActsAsMoney
     %w(+ - * /).each do |op|
       class_eval %Q{
         def #{op} other
-          other = parse(other) if !other.is_a?(BigDecimal) && !other.is_a?(Money)
+          other = parse other
           Money.new super, decimals
         end
       }
@@ -36,6 +36,7 @@ module ActsAsMoney
     private
 
     def parse object
+      return object if object.is_a? Money
       BigDecimal(object.to_s) rescue BigDecimal('0')
     end
   end
