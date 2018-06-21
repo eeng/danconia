@@ -4,6 +4,8 @@ require 'danconia/errors/exchange_rate_not_found'
 
 module Danconia
   class Money < DelegateClass(BigDecimal)
+    include Comparable
+
     attr_reader :decimals, :currency
     alias :amount :__getobj__
 
@@ -14,12 +16,12 @@ module Danconia
     end
 
     %w(+ - * /).each do |op|
-      class_eval %Q{
+      class_eval <<-EOR, __FILE__, __LINE__ + 1
         def #{op} other
-          other = parse other
-          Money.new super, decimals: decimals
+          other = other.exchange_to(currency).amount if other.is_a? Money
+          new_with_same_opts amount #{op} other, currency
         end
-      }
+      EOR
     end
 
     def to_s
@@ -42,11 +44,17 @@ module Danconia
       [amount, currency].hash
     end
 
+    def <=> other
+      other = other.exchange_to(currency).amount if other.is_a? Money
+      amount <=> other
+    end
+
     def exchange_to other_currency
-      if rate = Danconia.config.get_exchange_rate.call(@currency.code, other_currency)
-        Money.new amount * rate, other_currency
+      other_currency = Currency[other_currency]
+      if rate = get_exchange_rate(currency, other_currency)
+        new_with_same_opts amount * rate, other_currency
       else
-        raise Errors::ExchangeRateNotFound.new(@currency.code, other_currency)
+        raise Errors::ExchangeRateNotFound.new(@currency.code, other_currency.code)
       end
     end
 
@@ -57,8 +65,19 @@ module Danconia
     private
 
     def parse object
-      return object if object.is_a? Money
       BigDecimal(object.to_s) rescue BigDecimal('0')
+    end
+
+    def get_exchange_rate from, to
+      if from == to
+        1
+      else
+        Danconia.config.get_exchange_rate.call(from.code, to.code)
+      end
+    end
+
+    def new_with_same_opts amount, currency
+      Money.new amount, currency, decimals: decimals
     end
   end
 end

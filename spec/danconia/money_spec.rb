@@ -24,16 +24,10 @@ module Danconia
     end
 
     context 'arithmetic' do
-      it 'addition between Money instances' do
-        res = Money(3, decimals: 4) + Money(2, decimals: 4)
-        expect(res).to be_a Money
-        expect(res.decimals).to eq 4
-        expect(res.amount).to eq 5
-      end
-
-      it 'addition with other types' do
+      it 'addition' do
+        expect(Money(3) + Money(2)).to eq Money(5)
         expect(Money(3.5) + 0.5).to eq Money(4)
-        expect(Money(3.5) + 'a').to eq Money(3.5)
+        expect { Money(3.5) + 'a' }.to raise_error TypeError
       end
 
       it 'multiplication' do
@@ -45,6 +39,25 @@ module Danconia
 
       it 'division' do
         expect(Money(2) / 3.0).to eq Money(0.67)
+      end
+
+      it 'should preserve the currency' do
+        expect(Money(1, 'ARS') + 2).to eq Money(3, 'ARS')
+        expect(Money(1, 'ARS') + Money(2, 'ARS')).to eq Money(3, 'ARS')
+      end
+
+      it 'should exchange the other currency if it is different' do
+        with_config do |config|
+          config.get_exchange_rate = -> src, dst { 4 }
+          expect(Money(1, 'ARS') + Money(1, 'USD')).to eq Money(5, 'ARS')
+        end
+      end
+
+      it 'should return a new object with the same options' do
+        m1 = Money(4, decimals: 3)
+        m2 = m1 * 2
+        expect(m2).to_not eql m1
+        expect(m2.decimals).to eq 3
       end
     end
 
@@ -63,7 +76,16 @@ module Danconia
         expect(Money(1, 'ARS')).not_to eq 1
       end
 
-      it 'when using uniq' do
+      it 'should exchange to the source currency if they differ' do
+        with_config do |config|
+          config.get_exchange_rate = -> src, dst { 4 }
+
+          expect(Money(3, 'ARS') < Money(1, 'USD')).to be true
+          expect(Money(4, 'ARS') < Money(1, 'USD')).to be false
+        end
+      end
+
+      it 'should work with uniq' do
         expect([Money(1), Money(1)].uniq.size).to eq 1
         expect([Money(1), Money(1.1)].uniq.size).to eq 2
         expect([Money(1, 'ARS'), Money(1, 'USD')].uniq.size).to eq 2
@@ -115,6 +137,21 @@ module Danconia
 
       it 'if no rate if found should raise error' do
         expect { Money(2, 'USD').exchange_to('ARS') }.to raise_error Errors::ExchangeRateNotFound
+      end
+
+      it 'exchange between the same currency is always 1' do
+        expect(Money(5, 'EUR').exchange_to('EUR')).to eq Money(5, 'EUR')
+      end
+
+      it 'should return a new object with the same opts' do
+        with_config do |config|
+          config.get_exchange_rate = -> src, dst { 3 }
+          m1 = Money(1, 'USD', decimals: 0)
+          m2 = m1.exchange_to('ARS')
+          expect(m2).to_not eql m1
+          expect(m2.decimals).to eq 0
+          expect(m1).to eq Money(1, 'USD')
+        end
       end
     end
   end
