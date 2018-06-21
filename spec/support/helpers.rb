@@ -1,7 +1,7 @@
 module Helpers
-  def with_config
+  def with_config &block
     old_config = Danconia.config.dup
-    yield Danconia.config
+    Danconia.configure &block
     Danconia.config = old_config
   end
 end

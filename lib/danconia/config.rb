@@ -7,6 +7,10 @@ module Danconia
     def config= c
       @config = c
     end
+
+    def configure
+      yield config
+    end
   end
 
   class Config
