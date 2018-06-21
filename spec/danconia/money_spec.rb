@@ -11,6 +11,16 @@ module Danconia
       it 'non numeric values are treated as zero' do
         expect(Money.new('a')).to eq 0
       end
+
+      it 'should use the default currency if not specified' do
+        with_config do |config|
+          config.default_currency = 'ARS'
+          expect(Money.new(0).currency.code).to eq 'ARS'
+
+          config.default_currency = 'EUR'
+          expect(Money.new(0).currency.code).to eq 'EUR'
+        end
+      end
     end
 
     context 'arithmetic' do
