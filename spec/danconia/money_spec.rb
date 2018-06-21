@@ -9,7 +9,7 @@ module Danconia
       end
 
       it 'non numeric values are treated as zero' do
-        expect(Money.new('a')).to eq 0
+        expect(Money.new('a')).to eq Money.new(0)
       end
 
       it 'should use the default currency if not specified' do
@@ -32,30 +32,41 @@ module Danconia
       end
 
       it 'addition with other types' do
-        expect(Money.new(3.5) + 0.5).to eq 4
-        expect(Money.new(3.5) + 'a').to eq 3.5
+        expect(Money.new(3.5) + 0.5).to eq Money.new(4)
+        expect(Money.new(3.5) + 'a').to eq Money.new(3.5)
       end
 
       it 'multiplication' do
-        expect(Money.new(78.55) * 0.25).to eq 19.64
-        expect(Money.new(28.5) * 0.15).to eq 4.28
-        expect(Money.new(10.9906, decimals: 4) * 1.1).to eq 12.0897
+        expect(Money.new(78.55) * 0.25).to eq Money.new(19.64)
+        expect(Money.new(28.5) * 0.15).to eq Money.new(4.28)
+        expect(Money.new(10.9906, decimals: 4) * 1.1).to eq Money.new(12.0897, decimals: 4)
         expect(Money.new(1) * 2).to be_a Money
       end
 
       it 'division' do
-        expect(Money.new(2) / 3.0).to eq 0.67
+        expect(Money.new(2) / 3.0).to eq Money.new(0.67)
       end
     end
 
     context 'comparisson' do
-      it 'should be ==' do
-        expect(Money.new(1) == Money.new(1)).to be true
+      it 'two money objects are equal when the amount and currency are the same' do
+        expect(Money.new(1.01)).to eq Money.new(1.01)
+        expect(Money.new(1.01)).not_to eq Money.new(1.02)
+        expect(Money.new(1, 'ARS')).to eq Money.new(1, 'ARS')
+        expect(Money.new(1, 'USD')).not_to eq Money.new(1, 'ARS')
+      end
+
+      it 'allows to compare against numeric values when using the default currency' do
+        expect(Money.new(1)).to eq 1
+        expect(Money.new(1.35)).to eq 1.35
+        expect(Money.new(1)).not_to eq 2
+        expect(Money.new(1, 'ARS')).not_to eq 1
       end
 
       it 'when using uniq' do
         expect([Money.new(1), Money.new(1)].uniq.size).to eq 1
         expect([Money.new(1), Money.new(1.1)].uniq.size).to eq 2
+        expect([Money.new(1, 'ARS'), Money.new(1, 'USD')].uniq.size).to eq 2
       end
     end
 
@@ -82,8 +93,8 @@ module Danconia
 
     context '.inspect' do
       it 'should display the object internals' do
-        expect(Money.new(10.25).inspect).to eq '#<Danconia::Money amount: 10.25 currency: USD decimals: 2>'
-        expect(Money.new(10.25, 'ARS', decimals: 3).inspect).to eq '#<Danconia::Money amount: 10.25 currency: ARS decimals: 3>'
+        expect(Money.new(10.25).inspect).to eq '#<Danconia::Money amount: 10.25, currency: USD, decimals: 2>'
+        expect(Money.new(10.25, 'ARS', decimals: 3).inspect).to eq '#<Danconia::Money amount: 10.25, currency: ARS, decimals: 3>'
       end
     end
 
