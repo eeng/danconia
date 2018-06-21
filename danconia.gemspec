@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'danconia/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = "eeng-money"
+  gem.name          = "danconia"
   gem.version       = Danconia::VERSION
   gem.authors       = ["Emmanuel Nicolau"]
   gem.email         = ["emmanicolau@gmail.com"]
