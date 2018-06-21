@@ -23,7 +23,7 @@ module Danconia
     end
 
     def to_s
-      "#{currency.symbol}%.#{decimals}f" % amount
+      ActiveSupport::NumberHelper.number_to_currency amount, precision: decimals, unit: currency.symbol
     end
 
     def inspect
