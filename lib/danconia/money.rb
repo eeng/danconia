@@ -1,5 +1,6 @@
 require 'delegate'
 require 'bigdecimal'
+require 'danconia/errors/exchange_rate_not_found'
 
 module Danconia
   class Money < DelegateClass(BigDecimal)
@@ -31,6 +32,11 @@ module Danconia
 
     def in_cents
       (self * 100).round
+    end
+
+    def exchange_to other_currency
+      rate = Danconia.config.get_exchange_rate.call(@currency.code, other_currency) or raise Errors::ExchangeRateNotFound.new(@currency.code, other_currency)
+      Money.new amount * rate, other_currency
     end
 
     private

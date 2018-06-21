@@ -86,5 +86,25 @@ module Danconia
         expect(Money.new(10.25, 'ARS', decimals: 3).inspect).to eq '#<Danconia::Money amount: 10.25 currency: ARS decimals: 3>'
       end
     end
+
+    context 'exchange_to' do
+      it 'should use the configured function to get the exchange rate' do
+        with_config do |config|
+          config.get_exchange_rate = -> src, dst do
+            {
+              'USD->EUR' => 3,
+              'USD->ARS' => 4,
+            }["#{src}->#{dst}"]
+          end
+
+          expect(Money.new(2, 'USD').exchange_to('EUR')).to eq Money.new(6, 'EUR')
+          expect(Money.new(2, 'USD').exchange_to('ARS')).to eq Money.new(8, 'ARS')
+        end
+      end
+
+      it 'if no rate if found should raise error' do
+        expect { Money.new(2, 'USD').exchange_to('ARS') }.to raise_error Errors::ExchangeRateNotFound
+      end
+    end
   end
 end
