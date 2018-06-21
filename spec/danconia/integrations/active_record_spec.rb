@@ -3,10 +3,6 @@ require 'spec_helper'
 ActiveRecord::Migration.verbose = false
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 
-class Product < ActiveRecord::Base
-  money :price, :tax, :discount, :cost
-end
-
 module Danconia
   describe Integrations::ActiveRecord do
     context 'single currency' do
@@ -28,15 +24,19 @@ module Danconia
 
     context 'multicurrency support' do
       it 'setter' do
-        expect(Product.new(cost: Money(1, 'ARS'))).to have_attributes cost_amount: 1, cost_currency: 'ARS'
-        expect(Product.new(cost: 2)).to have_attributes cost_amount: 2, cost_currency: nil
-        expect(Product.new(cost: nil)).to have_attributes cost_amount: nil, cost_currency: nil
+        expect(Product.new(cost: Money(1, 'ARS')).attributes.values_at('cost', 'cost_currency')).to eq [1, 'ARS']
+        expect(Product.new(cost: 2).attributes.values_at('cost', 'cost_currency')).to eq [2, nil]
+        expect(Product.new(cost: nil).attributes.values_at('cost', 'cost_currency')).to eq [nil, nil]
       end
 
       it 'getter' do
-        expect(Product.new(cost_amount: 1, cost_currency: 'ARS').cost).to eq Money(1, 'ARS')
-        expect(Product.new(cost_amount: 1, cost_currency: nil).cost).to eq Money(1, 'USD')
+        expect(Product.new(cost: 1, cost_currency: 'ARS').cost).to eq Money(1, 'ARS')
+        expect(Product.new(cost: 1, cost_currency: nil).cost).to eq Money(1, 'USD')
       end
+    end
+
+    class Product < ActiveRecord::Base
+      money :price, :tax, :discount, :cost
     end
 
     before do
@@ -45,7 +45,7 @@ module Danconia
           t.column :price, :decimal, precision: 12, scale: 2
           t.column :tax, :decimal, precision: 12, scale: 2
           t.column :discount, :decimal, precision: 12, scale: 3
-          t.column :cost_amount, :decimal, precision: 6, scale: 2
+          t.column :cost, :decimal, precision: 6, scale: 2
           t.column :cost_currency, :string, limit: 3
         end
       end

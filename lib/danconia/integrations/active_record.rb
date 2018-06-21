@@ -10,25 +10,22 @@ module Danconia
       module ClassMethods
         def money(*attr_names)
           attr_names.each do |attr_name|
+            amount_column = attr_name
+            currency_column = "#{attr_name}_currency"
+
             class_eval <<-EOR, __FILE__, __LINE__ + 1
               def #{attr_name}= value
-                if respond_to? :#{attr_name}_currency
-                  write_attribute :#{attr_name}_amount, (value.is_a?(Money) ? value.amount : value)
-                  write_attribute :#{attr_name}_currency, (value.is_a?(Money) ? value.currency.code : nil)
-                else
-                  write_attribute :#{attr_name}, (value.is_a?(Money) ? value.amount : value)
-                end
+                amount = value.is_a?(Money) ? value.amount : value
+                write_attribute :#{amount_column}, amount
+
+                currency = value.is_a?(Money) ? value.currency.code : nil
+                write_attribute :#{currency_column}, currency if respond_to? :#{currency_column}
               end
 
               def #{attr_name}
-                amount_column, currency_column = if respond_to? :#{attr_name}_currency
-                  [:#{attr_name}_amount, :#{attr_name}_currency]
-                else
-                  [:#{attr_name}, nil]
-                end
-                amount = read_attribute amount_column
-                currency = read_attribute currency_column
-                decimals = self.class.columns.detect { |c| c.name == amount_column.to_s }.scale
+                amount = read_attribute :#{amount_column}
+                currency = read_attribute :#{currency_column}
+                decimals = self.class.columns.detect { |c| c.name == '#{amount_column}' }.scale
                 Money.new amount, currency, decimals: decimals if amount
               end
             EOR
