@@ -115,8 +115,7 @@ module Danconia
 
     context '.inspect' do
       it 'should display the object internals' do
-        expect(Money(10.25).inspect).to eq '#<Danconia::Money amount: 10.25, currency: USD, decimals: 2>'
-        expect(Money(10.25, 'ARS', decimals: 3).inspect).to eq '#<Danconia::Money amount: 10.25, currency: ARS, decimals: 3>'
+        expect(Money(10.25, 'ARS', decimals: 3).inspect).to eq '#<Danconia::Money 10.25 ARS>'
       end
     end
 
@@ -152,6 +151,13 @@ module Danconia
           expect(m2.decimals).to eq 0
           expect(m1).to eq Money(1, 'USD')
         end
+      end
+    end
+
+    context 'delegation' do
+      it 'should delegate missing methods to the amount' do
+        expect(Money(10).positive?).to be true
+        expect(Money(10).respond_to?(:positive?)).to be true
       end
     end
   end

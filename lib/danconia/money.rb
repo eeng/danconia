@@ -1,18 +1,15 @@
-require 'delegate'
 require 'bigdecimal'
 require 'danconia/errors/exchange_rate_not_found'
 
 module Danconia
-  class Money < DelegateClass(BigDecimal)
+  class Money
     include Comparable
-
-    attr_reader :decimals, :currency
-    alias :amount :__getobj__
+    attr_reader :amount, :currency, :decimals
 
     def initialize amount, currency_code = nil, decimals: 2
       @decimals = decimals
+      @amount = parse(amount).round(@decimals)
       @currency = Currency[currency_code || Danconia.config.default_currency]
-      super parse(amount).round(@decimals)
     end
 
     %w(+ - * /).each do |op|
@@ -29,7 +26,7 @@ module Danconia
     end
 
     def inspect
-      "#<#{self.class.name} amount: #{amount}, currency: #{currency.code}, decimals: #{decimals}>"
+      "#<#{self.class.name} #{amount} #{currency.code}>"
     end
 
     def == other
@@ -38,6 +35,10 @@ module Danconia
       else
         amount == other && currency.code == Danconia.config.default_currency
       end
+    end
+
+    def eql? other
+      self == other
     end
 
     def hash
@@ -60,6 +61,18 @@ module Danconia
 
     def in_cents
       (self * 100).round
+    end
+
+    def method_missing method, *args
+      if @amount.respond_to? method
+        @amount.send method, *args
+      else
+        super
+      end
+    end
+
+    def respond_to? method, *args
+      super or @amount.respond_to?(method, *args)
     end
 
     private
