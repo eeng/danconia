@@ -5,7 +5,7 @@ module Danconia
     context 'instantiation' do
       it 'should accept integers and strings' do
         expect(Money(10).amount).to eq BigDecimal('10')
-        expect(Money('10.235').amount).to eq BigDecimal('10.24')
+        expect(Money('10.235').amount).to eq BigDecimal('10.235')
       end
 
       it 'non numeric values are treated as zero' do
@@ -24,21 +24,12 @@ module Danconia
     end
 
     context 'arithmetic' do
-      it 'addition' do
+      it 'does the operation on the amount' do
         expect(Money(3) + Money(2)).to eq Money(5)
         expect(Money(3.5) + 0.5).to eq Money(4)
+        expect(Money(78.55) * 0.25).to eq Money(19.6375)
+        expect(Money(3) / 2).to eq Money(1.5)
         expect { Money(3.5) + 'a' }.to raise_error TypeError
-      end
-
-      it 'multiplication' do
-        expect(Money(78.55) * 0.25).to eq Money(19.64)
-        expect(Money(28.5) * 0.15).to eq Money(4.28)
-        expect(Money(10.9906, decimals: 4) * 1.1).to eq Money(12.0897, decimals: 4)
-        expect(Money(1) * 2).to be_a Money
-      end
-
-      it 'division' do
-        expect(Money(2) / 3.0).to eq Money(0.67)
       end
 
       it 'should preserve the currency' do
@@ -51,10 +42,12 @@ module Danconia
       end
 
       it 'should return a new object with the same options' do
-        m1 = Money(4, decimals: 3)
+        e = fake_exchange
+        m1 = Money(4, decimals: 3, exchange: e)
         m2 = m1 * 2
         expect(m2).to_not eql m1
         expect(m2.decimals).to eq 3
+        expect(m2.exchange).to eq e
       end
 
       it 'round should return a money object with the same currency' do
