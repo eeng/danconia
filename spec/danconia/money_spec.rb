@@ -47,10 +47,7 @@ module Danconia
       end
 
       it 'should exchange the other currency if it is different' do
-        with_config do |config|
-          config.get_exchange_rate = -> src, dst { 4 }
-          expect(Money(1, 'ARS') + Money(1, 'USD')).to eq Money(5, 'ARS')
-        end
+        expect(Money(1, 'ARS') + Money(1, 'USD', exchange: BasicExchange.new { 4 })).to eq Money(5, 'ARS')
       end
 
       it 'should return a new object with the same options' do
@@ -78,7 +75,7 @@ module Danconia
 
       it 'should exchange to the source currency if they differ' do
         with_config do |config|
-          config.get_exchange_rate = -> src, dst { 4 }
+          config.default_exchange = BasicExchange.new { 4 }
 
           expect(Money(3, 'ARS') < Money(1, 'USD')).to be true
           expect(Money(4, 'ARS') < Money(1, 'USD')).to be false
@@ -103,8 +100,13 @@ module Danconia
       end
 
       it 'with other currencies' do
+        exchange = Object.new.tap do |o|
+          def o.available_currencies
+            [{code: 'EUR', symbol: '€'}, {code: 'JPY', symbol: '¥'}]
+          end
+        end
         with_config do |config|
-          config.available_currencies = [{code: 'EUR', symbol: '€'}, {code: 'JPY', symbol: '¥'}]
+          config.default_exchange = exchange
 
           expect(Money(1, 'EUR').to_s).to eq '€1.00'
           expect(Money(1, 'JPY').to_s).to eq '¥1.00'
@@ -120,9 +122,13 @@ module Danconia
     end
 
     context 'exchange_to' do
-      it 'should use the configured function to get the exchange rate' do
+      it 'should use the exchange passed to the instance to get the rate' do
+        expect(Money(2, 'USD', exchange: BasicExchange.new { 3 }).exchange_to('ARS')).to eq Money(6, 'ARS')
+      end
+
+      it 'should use the default exchange if not set' do
         with_config do |config|
-          config.get_exchange_rate = -> src, dst do
+          config.default_exchange = BasicExchange.new do |src, dst|
             {
               'USD->EUR' => 3,
               'USD->ARS' => 4,
@@ -143,14 +149,11 @@ module Danconia
       end
 
       it 'should return a new object with the same opts' do
-        with_config do |config|
-          config.get_exchange_rate = -> src, dst { 3 }
-          m1 = Money(1, 'USD', decimals: 0)
-          m2 = m1.exchange_to('ARS')
-          expect(m2).to_not eql m1
-          expect(m2.decimals).to eq 0
-          expect(m1).to eq Money(1, 'USD')
-        end
+        m1 = Money(1, 'USD', decimals: 0, exchange: BasicExchange.new { 3 })
+        m2 = m1.exchange_to('ARS')
+        expect(m2).to_not eql m1
+        expect(m2.decimals).to eq 0
+        expect(m1).to eq Money(1, 'USD')
       end
     end
 

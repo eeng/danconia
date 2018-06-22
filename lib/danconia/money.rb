@@ -1,24 +1,17 @@
 require 'bigdecimal'
+require 'danconia/basic_exchange'
 require 'danconia/errors/exchange_rate_not_found'
 
 module Danconia
   class Money
     include Comparable
-    attr_reader :amount, :currency, :decimals
+    attr_reader :amount, :currency, :decimals, :exchange
 
-    def initialize amount, currency_code = nil, decimals: 2
+    def initialize amount, currency_code = nil, decimals: 2, exchange: Danconia.config.default_exchange
       @decimals = decimals
       @amount = parse(amount).round(@decimals)
-      @currency = Currency[currency_code || Danconia.config.default_currency]
-    end
-
-    %w(+ - * /).each do |op|
-      class_eval <<-EOR, __FILE__, __LINE__ + 1
-        def #{op} other
-          other = other.exchange_to(currency).amount if other.is_a? Money
-          new_with_same_opts amount #{op} other, currency
-        end
-      EOR
+      @currency = Currency.find(currency_code || Danconia.config.default_currency, exchange)
+      @exchange = exchange
     end
 
     def to_s
@@ -51,12 +44,21 @@ module Danconia
     end
 
     def exchange_to other_currency
-      other_currency = Currency[other_currency]
-      if rate = get_exchange_rate(currency, other_currency)
+      other_currency = Currency.find(other_currency, exchange)
+      if rate = exchange.rate(currency.code, other_currency.code)
         new_with_same_opts amount * rate, other_currency
       else
         raise Errors::ExchangeRateNotFound.new(@currency.code, other_currency.code)
       end
+    end
+
+    %w(+ - * /).each do |op|
+      class_eval <<-EOR, __FILE__, __LINE__ + 1
+        def #{op} other
+          other = other.exchange_to(currency).amount if other.is_a? Money
+          new_with_same_opts amount #{op} other, currency
+        end
+      EOR
     end
 
     def in_cents
@@ -79,14 +81,6 @@ module Danconia
 
     def parse object
       BigDecimal(object.to_s) rescue BigDecimal('0')
-    end
-
-    def get_exchange_rate from, to
-      if from == to
-        1
-      else
-        Danconia.config.get_exchange_rate.call(from.code, to.code)
-      end
     end
 
     def new_with_same_opts amount, currency

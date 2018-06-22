@@ -14,12 +14,11 @@ module Danconia
   end
 
   class Config
-    attr_accessor :default_currency, :available_currencies, :get_exchange_rate
+    attr_accessor :default_currency, :default_exchange
 
     def initialize
       @default_currency = 'USD'
-      @available_currencies = []
-      @get_exchange_rate = -> src, dst { nil }
+      @default_exchange = BasicExchange.new
     end
   end
 end
