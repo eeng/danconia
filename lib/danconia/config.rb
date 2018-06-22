@@ -1,3 +1,5 @@
+require 'danconia/exchange'
+
 module Danconia
   class << self
     def config
@@ -18,7 +20,7 @@ module Danconia
 
     def initialize
       @default_currency = 'USD'
-      @default_exchange = BasicExchange.new
+      @default_exchange = Exchange.new
     end
   end
 end

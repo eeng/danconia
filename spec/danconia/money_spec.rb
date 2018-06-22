@@ -47,7 +47,7 @@ module Danconia
       end
 
       it 'should exchange the other currency if it is different' do
-        expect(Money(1, 'ARS') + Money(1, 'USD', exchange: BasicExchange.new { 4 })).to eq Money(5, 'ARS')
+        expect(Money(1, 'ARS') + Money(1, 'USD', exchange: fake_exchange(rate: 4))).to eq Money(5, 'ARS')
       end
 
       it 'should return a new object with the same options' do
@@ -75,7 +75,7 @@ module Danconia
 
       it 'should exchange to the source currency if they differ' do
         with_config do |config|
-          config.default_exchange = BasicExchange.new { 4 }
+          config.default_exchange = fake_exchange(rate: 4)
 
           expect(Money(3, 'ARS') < Money(1, 'USD')).to be true
           expect(Money(4, 'ARS') < Money(1, 'USD')).to be false
@@ -90,28 +90,25 @@ module Danconia
     end
 
     context 'to_s' do
-      it 'should round according to decimals' do
+      it 'should add the currency symbol' do
         expect(Money(3.25).to_s).to eq '$3.25'
-        expect(Money(3.256, decimals: 3).to_s).to eq '$3.256'
-      end
 
-      it 'nil should be like zero' do
-        expect(Money(nil).to_s).to eq '$0.00'
-      end
-
-      it 'with other currencies' do
-        exchange = Object.new.tap do |o|
-          def o.available_currencies
-            [{code: 'EUR', symbol: '€'}, {code: 'JPY', symbol: '¥'}]
-          end
-        end
         with_config do |config|
-          config.default_exchange = exchange
+          config.default_exchange = double 'exchange', available_currencies: [{code: 'EUR', symbol: '€'}, {code: 'JPY', symbol: '¥'}]
 
           expect(Money(1, 'EUR').to_s).to eq '€1.00'
           expect(Money(1, 'JPY').to_s).to eq '¥1.00'
           expect(Money(1, 'OTHER').to_s).to eq '$1.00'
         end
+      end
+
+      it 'should round according to decimals' do
+        expect(Money(3.256, decimals: 2).to_s).to eq '$3.26'
+        expect(Money(3.2517, decimals: 3).to_s).to eq '$3.252'
+      end
+
+      it 'nil should be like zero' do
+        expect(Money(nil).to_s).to eq '$0.00'
       end
     end
 
@@ -123,18 +120,16 @@ module Danconia
 
     context 'exchange_to' do
       it 'should use the exchange passed to the instance to get the rate' do
-        expect(Money(2, 'USD', exchange: BasicExchange.new { 3 }).exchange_to('ARS')).to eq Money(6, 'ARS')
+        expect(Money(2, 'USD', exchange: fake_exchange(rate: 3)).exchange_to('ARS')).to eq Money(6, 'ARS')
       end
 
       it 'should use the default exchange if not set' do
-        with_config do |config|
-          config.default_exchange = BasicExchange.new do |src, dst|
-            {
-              'USD->EUR' => 3,
-              'USD->ARS' => 4,
-            }["#{src}->#{dst}"]
-          end
+        exchange = fake_exchange
+        allow(exchange).to receive(:rate).with('USD', 'EUR').and_return(3)
+        allow(exchange).to receive(:rate).with('USD', 'ARS').and_return(4)
 
+        with_config do |config|
+          config.default_exchange = exchange
           expect(Money(2, 'USD').exchange_to('EUR')).to eq Money(6, 'EUR')
           expect(Money(2, 'USD').exchange_to('ARS')).to eq Money(8, 'ARS')
         end
@@ -149,7 +144,7 @@ module Danconia
       end
 
       it 'should return a new object with the same opts' do
-        m1 = Money(1, 'USD', decimals: 0, exchange: BasicExchange.new { 3 })
+        m1 = Money(1, 'USD', decimals: 0, exchange: fake_exchange(rate: 3))
         m2 = m1.exchange_to('ARS')
         expect(m2).to_not eql m1
         expect(m2.decimals).to eq 0
@@ -162,6 +157,10 @@ module Danconia
         expect(Money(10).positive?).to be true
         expect(Money(10).respond_to?(:positive?)).to be true
       end
+    end
+
+    def fake_exchange args = {}
+      double 'exchange', args.reverse_merge(rate: nil, available_currencies: [])
     end
   end
 end

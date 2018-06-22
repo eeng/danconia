@@ -15,11 +15,8 @@ module Danconia
 
             class_eval <<-EOR, __FILE__, __LINE__ + 1
               def #{attr_name}= value
-                amount = value.is_a?(Money) ? value.amount : value
-                write_attribute :#{amount_column}, amount
-
-                currency = value.is_a?(Money) ? value.currency.code : nil
-                write_attribute :#{currency_column}, currency if respond_to? :#{currency_column}
+                write_attribute :#{amount_column}, value.is_a?(Money) ? value.amount : value
+                write_attribute :#{currency_column}, value.currency.code if respond_to?(:#{currency_column}) && value.is_a?(Money)
               end
 
               def #{attr_name}

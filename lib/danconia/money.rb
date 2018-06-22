@@ -1,5 +1,4 @@
 require 'bigdecimal'
-require 'danconia/basic_exchange'
 require 'danconia/errors/exchange_rate_not_found'
 
 module Danconia
@@ -45,7 +44,7 @@ module Danconia
 
     def exchange_to other_currency
       other_currency = Currency.find(other_currency, exchange)
-      if rate = exchange.rate(currency.code, other_currency.code)
+      if rate = exchange_rate(currency, other_currency)
         new_with_same_opts amount * rate, other_currency
       else
         raise Errors::ExchangeRateNotFound.new(@currency.code, other_currency.code)
@@ -85,6 +84,11 @@ module Danconia
 
     def new_with_same_opts amount, currency
       Money.new amount, currency, decimals: decimals
+    end
+
+    def exchange_rate from, to
+      return 1 if from == to
+      exchange.rate from.code, to.code
     end
   end
 end

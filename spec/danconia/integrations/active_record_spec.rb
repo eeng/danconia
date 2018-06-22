@@ -31,7 +31,9 @@ module Danconia
 
       it 'getter' do
         expect(Product.new(cost: 1, cost_currency: 'ARS').cost).to eq Money(1, 'ARS')
+        expect(Product.new(cost_currency: 'ARS', cost: 1).cost).to eq Money(1, 'ARS')
         expect(Product.new(cost: 1, cost_currency: nil).cost).to eq Money(1, 'USD')
+        expect(Product.new(cost: nil, cost_currency: nil).cost).to eq nil
       end
     end
 
