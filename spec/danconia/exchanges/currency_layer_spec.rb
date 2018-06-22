@@ -18,10 +18,7 @@ module Danconia
                 }
             }
           END
-          expect(subject.fetch_rates).to eq [
-            {from: 'USD', to: 'ARS', rate: 27.110001},
-            {from: 'USD', to: 'AUD', rate: 1.346196},
-          ]
+          expect(subject.fetch_rates).to eq 'USDARS' => 27.110001, 'USDAUD' => 1.346196
         end
 
         it 'when the API returns an error' do
@@ -38,64 +35,20 @@ module Danconia
         end
       end
 
-      context 'store_rates', active_record: true do
-        it 'creates the rates if they dont already exists' do
-          expect {
-            subject.store_rates [
-              {from: 'USD', to: 'ARS', rate: 27.110001},
-              {from: 'USD', to: 'AUD', rate: 1.346196}
-            ]
-          }.to change { ExchangeRate.count }.by 2
-          expect(ExchangeRate.first).to have_attributes from: 'USD', to: 'ARS', rate: 27.110001
-        end
-
-        it 'otherwise update the rate' do
-          er = ExchangeRate.create! from: 'USD', to: 'ARS', rate: 25
-          expect {
-            subject.store_rates [{from: 'USD', to: 'ARS', rate: 27}]
-          }.to_not change { ExchangeRate.count }
-          expect(er.reload.rate).to eq 27
-        end
-      end
-
-      context 'update_rates!', active_record: true do
+      context 'update_rates!' do
         it 'fetches the rates and stores them' do
-          expect(subject).to receive(:fetch_rates) { [{from: 'USD', to: 'ARS', rate: 3}] }
-          expect { subject.update_rates! }.to change { ExchangeRate.count }
-        end
-      end
-
-      context 'rate', active_record: true do
-        it 'returns the exchange rate value for the supplied currencies' do
-          ExchangeRate.create! from: 'USD', to: 'EUR', rate: 3
-          ExchangeRate.create! from: 'USD', to: 'ARS', rate: 4
-          expect(subject.rate 'USD', 'EUR').to eq 3
-          expect(subject.rate 'USD', 'ARS').to eq 4
+          expect(subject).to receive(:fetch_rates) { {'USDARS' => 3, 'USDAUD' => 4} }
+          subject.update_rates!
+          expect(subject.rates.size).to eq 2
+          expect(subject.rate('USD', 'ARS')).to eq 3
+          expect(subject.rate('USD', 'AUD')).to eq 4
         end
 
-        it 'returns nil if not found' do
-          expect(subject.rate 'USD', 'EUR').to eq nil
-        end
-
-        it 'if the direct conversion is not found, tries to find the inverse' do
-          ExchangeRate.create! from: 'USD', to: 'EUR', rate: 3
-          expect(subject.rate 'EUR', 'USD').to eq (BigDecimal(1) / 3).round 6
-        end
-
-        it 'if not direct nor inverse conversion is found and both are different than USD, tries to convert through USD' do
-          ExchangeRate.create! from: 'USD', to: 'EUR', rate: 3
-          ExchangeRate.create! from: 'USD', to: 'ARS', rate: 6
-          expect(subject.rate 'EUR', 'ARS').to be_within(0.00001).of 2
-          expect(subject.rate 'ARS', 'EUR').to be_within(0.00001).of 0.5
-        end
-      end
-
-      before :each, :active_record do
-        ActiveRecord::Schema.define do
-          create_table :exchange_rates do |t|
-            t.string :from, :to, limit: 3
-            t.decimal :rate, precision: 12, scale: 6
-          end
+        it 'if a rate already exists should update it' do
+          subject.store.save_rates 'USDARS' => 3
+          expect(subject).to receive(:fetch_rates) { {'USDARS' => 3.1} }
+          subject.update_rates!
+          expect(subject.rate('USD', 'ARS')).to eq 3.1
         end
       end
     end

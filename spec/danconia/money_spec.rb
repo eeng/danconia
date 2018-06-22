@@ -121,12 +121,8 @@ module Danconia
       end
 
       it 'should use the default exchange if not set' do
-        exchange = fake_exchange
-        allow(exchange).to receive(:rate).with('USD', 'EUR').and_return(3)
-        allow(exchange).to receive(:rate).with('USD', 'ARS').and_return(4)
-
         with_config do |config|
-          config.default_exchange = exchange
+          config.default_exchange = Exchanges::FixedRates.new(rates: {'USDEUR' => 3, 'USDARS' => 4})
           expect(Money(2, 'USD').exchange_to('EUR')).to eq Money(6, 'EUR')
           expect(Money(2, 'USD').exchange_to('ARS')).to eq Money(8, 'ARS')
         end

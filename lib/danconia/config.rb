@@ -20,7 +20,7 @@ module Danconia
 
     def initialize
       @default_currency = 'USD'
-      @default_exchange = Exchange.new
+      @default_exchange = Exchanges::FixedRates.new
     end
   end
 end

@@ -44,11 +44,8 @@ module Danconia
 
     def exchange_to other_currency
       other_currency = Currency.find(other_currency, exchange)
-      if rate = exchange_rate(currency, other_currency)
-        clone_with amount * rate, other_currency
-      else
-        raise Errors::ExchangeRateNotFound.new(@currency.code, other_currency.code)
-      end
+      rate = exchange_rate(currency, other_currency)
+      clone_with amount * rate, other_currency
     end
 
     %w(+ - * /).each do |op|
