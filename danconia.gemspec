@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Danconia::VERSION
   gem.authors       = ["Emmanuel Nicolau"]
   gem.email         = ["emmanicolau@gmail.com"]
-  gem.description   = %q{Single currency money backed by BigDecimal}
-  gem.summary       = %q{Single currency money backed by BigDecimal}
+  gem.description   = %q{Multi-currency money library backed by BigDecimal}
+  gem.summary       = %q{Multi-currency money library backed by BigDecimal}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
