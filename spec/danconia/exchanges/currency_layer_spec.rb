@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'danconia/exchanges/currency_layer'
 
 module Danconia
   module Exchanges

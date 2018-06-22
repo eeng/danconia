@@ -91,7 +91,7 @@ module Danconia
         expect(Money(3.25).to_s).to eq '$3.25'
 
         with_config do |config|
-          config.default_exchange = double 'exchange', available_currencies: [{code: 'EUR', symbol: '€'}, {code: 'JPY', symbol: '¥'}]
+          config.default_exchange = Exchanges::FixedRates.new currencies: [{code: 'EUR', symbol: '€'}, {code: 'JPY', symbol: '¥'}]
 
           expect(Money(1, 'EUR').to_s).to eq '€1.00'
           expect(Money(1, 'JPY').to_s).to eq '¥1.00'
@@ -153,7 +153,7 @@ module Danconia
     end
 
     def fake_exchange args = {}
-      double 'exchange', args.reverse_merge(rate: nil, available_currencies: [])
+      double 'exchange', args.reverse_merge(rate: nil, currencies: [])
     end
   end
 end

@@ -5,8 +5,8 @@ require 'json'
 module Danconia
   module Exchanges
     class CurrencyLayer < Exchange
-      def initialize access_key:
-        super()
+      def initialize access_key:, **args
+        super args
         @access_key = access_key
       end
 

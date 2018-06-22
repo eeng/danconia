@@ -2,10 +2,11 @@ require 'danconia/stores/in_memory'
 
 module Danconia
   class Exchange
-    attr_reader :store
+    attr_reader :store, :currencies
 
-    def initialize store: Stores::InMemory.new
+    def initialize store: Stores::InMemory.new, currencies: []
       @store = store
+      @currencies = currencies
     end
 
     def rate from, to
@@ -22,11 +23,6 @@ module Danconia
 
     def rates
       @store.rates
-    end
-
-    # Currently is only needed for money formatting
-    def available_currencies
-      []
     end
   end
 end
