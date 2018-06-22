@@ -45,7 +45,7 @@ module Danconia
     def exchange_to other_currency
       other_currency = Currency.find(other_currency, exchange)
       if rate = exchange_rate(currency, other_currency)
-        new_with_same_opts amount * rate, other_currency
+        clone_with amount * rate, other_currency
       else
         raise Errors::ExchangeRateNotFound.new(@currency.code, other_currency.code)
       end
@@ -55,9 +55,13 @@ module Danconia
       class_eval <<-EOR, __FILE__, __LINE__ + 1
         def #{op} other
           other = other.exchange_to(currency).amount if other.is_a? Money
-          new_with_same_opts amount #{op} other, currency
+          clone_with amount #{op} other
         end
       EOR
+    end
+
+    def round *args
+      clone_with amount.round(*args)
     end
 
     def in_cents
@@ -82,7 +86,7 @@ module Danconia
       BigDecimal(object.to_s) rescue BigDecimal('0')
     end
 
-    def new_with_same_opts amount, currency
+    def clone_with amount, currency = @currency
       Money.new amount, currency, decimals: decimals
     end
 

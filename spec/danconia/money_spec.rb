@@ -56,6 +56,10 @@ module Danconia
         expect(m2).to_not eql m1
         expect(m2.decimals).to eq 3
       end
+
+      it 'round should return a money object with the same currency' do
+        expect(Money(1.9, 'ARS').round).to eq Money(2, 'ARS')
+      end
     end
 
     context 'comparisson' do
