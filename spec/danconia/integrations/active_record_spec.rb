@@ -1,10 +1,7 @@
 require 'spec_helper'
 
-ActiveRecord::Migration.verbose = false
-ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
-
 module Danconia
-  describe Integrations::ActiveRecord do
+  describe Integrations::ActiveRecord, active_record: true do
     context 'single currency' do
       it 'setter' do
         expect(Product.new(price: 1.536).read_attribute :price).to eq 1.54
@@ -50,12 +47,6 @@ module Danconia
           t.column :cost, :decimal, precision: 6, scale: 2
           t.column :cost_currency, :string, limit: 3
         end
-      end
-    end
-
-    after do
-      ActiveRecord::Base.connection.tables.each do |table|
-        ActiveRecord::Base.connection.drop_table(table)
       end
     end
   end
