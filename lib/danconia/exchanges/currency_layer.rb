@@ -13,9 +13,9 @@ module Danconia
         if from == 'USD' and direct = ExchangeRate.find_by(from: from, to: to)
           direct.rate
         elsif to == 'USD' and inverse = ExchangeRate.find_by(from: to, to: from)
-          1 / inverse.rate
+          (1 / inverse.rate).round 6
         elsif from != 'USD' and to != 'USD' and from_in_usd = rate(from, 'USD') and to_per_usd = rate('USD', to)
-          from_in_usd * to_per_usd
+          (from_in_usd * to_per_usd).round 6
         end
       end
 

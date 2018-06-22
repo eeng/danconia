@@ -79,14 +79,14 @@ module Danconia
 
         it 'if the direct conversion is not found, tries to find the inverse' do
           ExchangeRate.create! from: 'USD', to: 'EUR', rate: 3
-          expect(subject.rate 'EUR', 'USD').to eq BigDecimal(1) / 3
+          expect(subject.rate 'EUR', 'USD').to eq (BigDecimal(1) / 3).round 6
         end
 
         it 'if not direct nor inverse conversion is found and both are different than USD, tries to convert through USD' do
           ExchangeRate.create! from: 'USD', to: 'EUR', rate: 3
           ExchangeRate.create! from: 'USD', to: 'ARS', rate: 6
-          expect(subject.rate 'EUR', 'ARS').to be_within(0.000001).of 2
-          expect(subject.rate 'ARS', 'EUR').to be_within(0.000001).of 0.5
+          expect(subject.rate 'EUR', 'ARS').to be_within(0.00001).of 2
+          expect(subject.rate 'ARS', 'EUR').to be_within(0.00001).of 0.5
         end
       end
 
