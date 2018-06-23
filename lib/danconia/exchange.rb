@@ -1,5 +1,3 @@
-require 'danconia/stores/in_memory'
-
 module Danconia
   class Exchange
     attr_reader :store, :currencies

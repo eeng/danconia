@@ -6,3 +6,6 @@ require 'danconia/kernel'
 require 'danconia/integrations/active_record'
 require 'danconia/exchanges/fixed_rates'
 require 'danconia/exchanges/currency_layer'
+require 'danconia/stores/in_memory'
+require 'danconia/stores/active_record'
+
