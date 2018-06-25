@@ -13,8 +13,12 @@ module Danconia
       @exchange = exchange
     end
 
-    def to_s
+    def format decimals: @decimals
       ActiveSupport::NumberHelper.number_to_currency amount, precision: decimals, unit: currency.symbol
+    end
+
+    def to_s
+      format
     end
 
     def inspect

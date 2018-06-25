@@ -87,6 +87,12 @@ module Danconia
       end
     end
 
+    context 'format' do
+      it 'allow to override the number of decimals' do
+        expect(Money(3.561, decimals: 3).format(decimals: 1)).to eq '$3.6'
+      end
+    end
+
     context 'to_s' do
       it 'should add the currency symbol' do
         expect(Money(3.25).to_s).to eq '$3.25'
