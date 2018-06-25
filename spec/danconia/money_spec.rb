@@ -142,6 +142,16 @@ module Danconia
       end
     end
 
+    context 'default_currency?' do
+      it 'is true if the currency is the configured default' do
+        with_config do |config|
+          config.default_currency = 'ARS'
+          expect(Money(1, 'ARS')).to be_default_currency
+          expect(Money(1, 'USD')).to_not be_default_currency
+        end
+      end
+    end
+
     context 'delegation' do
       it 'should delegate missing methods to the amount' do
         expect(Money(10).positive?).to be true

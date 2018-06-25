@@ -44,8 +44,14 @@ module Danconia
 
     def exchange_to other_currency
       other_currency = Currency.find(other_currency, exchange)
-      rate = exchange_rate(currency, other_currency)
+      rate = exchange_rate_to(other_currency.code)
       clone_with amount * rate, other_currency
+    end
+
+    def exchange_rate_to to
+      from = currency.code
+      return 1 if from == to
+      exchange.rate from, to
     end
 
     %w(+ - * /).each do |op|
@@ -63,6 +69,10 @@ module Danconia
 
     def in_cents
       (self * 100).round
+    end
+
+    def default_currency?
+      currency.code == Danconia.config.default_currency
     end
 
     def method_missing method, *args
@@ -85,11 +95,6 @@ module Danconia
 
     def clone_with amount, currency = @currency
       Money.new amount, currency, decimals: decimals, exchange: exchange
-    end
-
-    def exchange_rate from, to
-      return 1 if from == to
-      exchange.rate from.code, to.code
     end
   end
 end
