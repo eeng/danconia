@@ -140,6 +140,11 @@ module Danconia
         expect(m2.decimals).to eq 0
         expect(m1).to eq Money(1, 'USD')
       end
+
+      it 'if the destination currency is blank should not do the conversion' do
+        expect(Money(1, 'USD').exchange_to('')).to eq Money(1, 'USD')
+        expect(Money(1, 'ARS').exchange_to('')).to eq Money(1, 'ARS')
+      end
     end
 
     context 'default_currency?' do
