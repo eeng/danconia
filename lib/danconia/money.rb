@@ -18,7 +18,7 @@ module Danconia
     end
 
     def inspect
-      "#<#{self.class.name} #{amount} #{currency.code}>"
+      "#{amount} #{currency.code}"
     end
 
     def == other

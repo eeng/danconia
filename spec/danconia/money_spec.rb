@@ -108,7 +108,7 @@ module Danconia
 
     context '.inspect' do
       it 'should display the object internals' do
-        expect(Money(10.25, 'ARS', decimals: 3).inspect).to eq '#<Danconia::Money 10.25 ARS>'
+        expect(Money(10.25, 'ARS', decimals: 3).inspect).to eq '10.25 ARS'
       end
     end
 
