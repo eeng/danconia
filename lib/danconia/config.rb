@@ -1,5 +1,3 @@
-require 'danconia/exchange'
-
 module Danconia
   class << self
     def config
