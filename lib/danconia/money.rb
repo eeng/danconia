@@ -8,7 +8,7 @@ module Danconia
 
     def initialize amount, currency_code = nil, decimals: 2, exchange: Danconia.config.default_exchange
       @decimals = decimals
-      @amount = parse(amount)
+      @amount = parse amount
       @currency = Currency.find(currency_code || Danconia.config.default_currency, exchange)
       @exchange = exchange
     end
@@ -80,7 +80,7 @@ module Danconia
     private
 
     def parse object
-      BigDecimal(object.to_s) rescue BigDecimal('0')
+      BigDecimal(object&.to_s)
     end
 
     def clone_with amount, currency = @currency
