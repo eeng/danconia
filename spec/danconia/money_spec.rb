@@ -14,7 +14,7 @@ module Danconia
       end
 
       it 'should use the default currency if not specified' do
-        with_config do |config|
+        TestHelpers.with_config do |config|
           config.default_currency = 'ARS'
           expect(Money(0).currency.code).to eq 'ARS'
 
@@ -72,9 +72,7 @@ module Danconia
       end
 
       it 'should exchange to the source currency if they differ' do
-        with_config do |config|
-          config.default_exchange = fake_exchange(rate: 4)
-
+        TestHelpers.with_rates 'USDARS' => 4 do |config|
           expect(Money(3, 'ARS') < Money(1, 'USD')).to be true
           expect(Money(4, 'ARS') < Money(1, 'USD')).to be false
         end
@@ -97,7 +95,7 @@ module Danconia
       it 'should add the currency symbol' do
         expect(Money(3.25).to_s).to eq '$3.25'
 
-        with_config do |config|
+        TestHelpers.with_config do |config|
           config.default_exchange = Exchanges::FixedRates.new currencies: [{code: 'EUR', symbol: '€'}, {code: 'JPY', symbol: '¥'}]
 
           expect(Money(1, 'EUR').to_s).to eq '€1.00'
@@ -124,8 +122,7 @@ module Danconia
       end
 
       it 'should use the default exchange if not set' do
-        with_config do |config|
-          config.default_exchange = Exchanges::FixedRates.new(rates: {'USDEUR' => 3, 'USDARS' => 4})
+        TestHelpers.with_rates 'USDEUR' => 3, 'USDARS' => 4 do
           expect(Money(2, 'USD').exchange_to('EUR')).to eq Money(6, 'EUR')
           expect(Money(2, 'USD').exchange_to('ARS')).to eq Money(8, 'ARS')
         end
@@ -155,7 +152,7 @@ module Danconia
 
     context 'default_currency?' do
       it 'is true if the currency is the configured default' do
-        with_config do |config|
+        TestHelpers.with_config do |config|
           config.default_currency = 'ARS'
           expect(Money(1, 'ARS')).to be_default_currency
           expect(Money(1, 'USD')).to_not be_default_currency
