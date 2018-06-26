@@ -8,9 +8,9 @@ module Danconia
         expect(Money('10.235').amount).to eq BigDecimal('10.235')
       end
 
-      it 'non numeric values raises errors like BigDecimal, Integer, and so on' do
-        expect { Money('a') }.to raise_error ArgumentError
-        expect { Money(nil) }.to raise_error TypeError
+      it 'non numeric values are treated as zero' do
+        expect(Money(nil)).to eq Money(0)
+        expect(Money('a')).to eq Money(0)
       end
 
       it 'should use the default currency if not specified' do

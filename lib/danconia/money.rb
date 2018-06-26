@@ -94,7 +94,7 @@ module Danconia
     private
 
     def parse object
-      BigDecimal(object&.to_s)
+      BigDecimal(object.to_s) rescue BigDecimal(0)
     end
 
     def clone_with amount, currency = @currency
