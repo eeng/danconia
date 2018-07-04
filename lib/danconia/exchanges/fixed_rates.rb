@@ -3,7 +3,12 @@ module Danconia
     class FixedRates < Exchange
       def initialize rates: {}, **args
         super args
-        @store.save_rates rates
+        @rates = rates
+        update_rates!
+      end
+
+      def fetch_rates
+        @rates
       end
     end
   end

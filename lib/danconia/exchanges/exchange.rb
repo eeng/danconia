@@ -23,6 +23,10 @@ module Danconia
       def rates
         @store.rates
       end
+
+      def update_rates!
+        @store.save_rates fetch_rates
+      end
     end
   end
 end

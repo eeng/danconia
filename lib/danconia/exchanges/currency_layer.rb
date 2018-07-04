@@ -10,10 +10,6 @@ module Danconia
         @access_key = access_key
       end
 
-      def update_rates!
-        @store.save_rates fetch_rates
-      end
-
       def fetch_rates
         response = JSON.parse Net::HTTP.get URI "http://www.apilayer.net/api/live?access_key=#{@access_key}"
         if response['success']
