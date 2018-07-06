@@ -9,7 +9,7 @@ module Danconia
 
       def with_rates rates
         with_config do |config|
-          config.default_exchange = Exchanges::FixedRates.new rates: rates, currencies: config.default_exchange.currencies
+          config.default_exchange = Exchanges::FixedRates.new rates: rates
           yield
         end
       end

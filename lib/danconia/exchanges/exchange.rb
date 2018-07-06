@@ -1,11 +1,10 @@
 module Danconia
   module Exchanges
     class Exchange
-      attr_reader :store, :currencies
+      attr_reader :store
 
-      def initialize store: Stores::InMemory.new, currencies: []
+      def initialize store: Stores::InMemory.new
         @store = store
-        @currencies = currencies
       end
 
       def rate from, to
