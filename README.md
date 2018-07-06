@@ -1,26 +1,18 @@
 # Danconia
 
-TODO: Write a gem description
+A very simple money library for Ruby, backed by BigDecimal (no conversion to cents, i.e. "infinite precision") with support for external exchange rates services.
 
 [![Build Status](https://travis-ci.org/eeng/danconia.svg?branch=master)](https://travis-ci.org/eeng/danconia)
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-    gem 'danconia'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install danconia
+```ruby
+gem 'danconia'
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+Please refer to the `examples` folder.
 
 ## Contributing
 

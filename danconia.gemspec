@@ -6,11 +6,12 @@ require 'danconia/version'
 Gem::Specification.new do |gem|
   gem.name          = "danconia"
   gem.version       = Danconia::VERSION
-  gem.authors       = ["Emmanuel Nicolau"]
-  gem.email         = ["emmanicolau@gmail.com"]
+  gem.author        = "Emmanuel Nicolau"
+  gem.email         = "emmanicolau@gmail.com"
   gem.description   = %q{Multi-currency money library backed by BigDecimal}
   gem.summary       = %q{Multi-currency money library backed by BigDecimal}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/eeng/danconia"
+  gem.license       = "MIT"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
