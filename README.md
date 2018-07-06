@@ -65,6 +65,18 @@ Product.new(price: 30, price_currency: 'ARS').price # => 30 ARS
 
 Currently, there is no option to customize the names of the columns but should be fairly simple to implement if needed.
 
+## Testing
+
+There is a FixedRates exchange that can be used during testing to supply static rates (see `examples/fixed_rates.rb`). Another possibility is to use the following helper:
+
+```ruby
+require 'danconia/test_helpers'
+
+Danconia::TestHelpers.with_rates 'USDARS' => 3 do
+  Money(2, 'USD').exchange_to('ARS') # => 6.0 ARS
+end
+```
+
 ## Contributing
 
 1. Fork it
