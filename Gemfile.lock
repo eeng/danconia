@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    danconia (0.2.3)
+    danconia (0.2.4)
       activerecord (>= 3.0.0)
 
 GEM

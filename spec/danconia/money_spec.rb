@@ -167,6 +167,12 @@ module Danconia
       end
     end
 
+    context 'to_json' do
+      it 'should delegate to the amount' do
+        expect(Money(1).to_json).to eq '"1.0"'
+      end
+    end
+
     def fake_exchange args = {}
       double 'exchange', args.reverse_merge(rate: nil)
     end

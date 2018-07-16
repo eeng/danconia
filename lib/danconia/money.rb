@@ -75,6 +75,10 @@ module Danconia
       (self * 100).round
     end
 
+    def as_json *args
+      amount.as_json *args
+    end
+
     def default_currency?
       currency.code == Danconia.config.default_currency
     end
