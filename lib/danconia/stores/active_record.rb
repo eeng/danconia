@@ -14,7 +14,7 @@ module Danconia
       end
 
       def rates
-        ExchangeRate.all
+        Hash[ExchangeRate.all.map { |er| [er.pair, er.rate] }]
       end
     end
 

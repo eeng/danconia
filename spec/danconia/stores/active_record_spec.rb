@@ -7,7 +7,7 @@ module Danconia
         it 'should create or update the rates' do
           ExchangeRate.create! pair: 'USDEUR', rate: 2
           expect { subject.save_rates 'USDEUR' => 3, 'USDARS' => 4 }.to change { ExchangeRate.count }.by 1
-          expect(subject.rates.map { |e| [e.pair, e.rate] }).to eq({'USDEUR' => 3, 'USDARS' => 4}.to_a)
+          expect(subject.rates).to eq('USDEUR' => 3, 'USDARS' => 4)
         end
       end
 
