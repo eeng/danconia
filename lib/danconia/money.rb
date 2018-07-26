@@ -13,13 +13,12 @@ module Danconia
       @exchange = exchange
     end
 
-    def format decimals: @decimals
-      ActiveSupport::NumberHelper.number_to_currency amount, precision: decimals, unit: currency.symbol
+    def format decimals: @decimals, **other_options
+      opts = other_options.reverse_merge precision: decimals, unit: currency.symbol
+      ActiveSupport::NumberHelper.number_to_currency amount, opts
     end
 
-    def to_s
-      format
-    end
+    alias to_s format
 
     def inspect
       "#{amount} #{currency.code}"

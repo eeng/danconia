@@ -89,6 +89,10 @@ module Danconia
       it 'allow to override the number of decimals' do
         expect(Money(3.561, decimals: 3).format(decimals: 1)).to eq '$3.6'
       end
+
+      it 'pass the options to the activesupport helper' do
+        expect(Money(2).format(format: '%n %u')).to eq '2.00 $'
+      end
     end
 
     context 'to_s' do
