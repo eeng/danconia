@@ -47,14 +47,8 @@ module Danconia
 
     def exchange_to other_currency
       other_currency = other_currency.presence && Currency.find(other_currency, exchange) || currency
-      rate = exchange_rate_to(other_currency.code)
+      rate = exchange.rate currency.code, other_currency.code
       clone_with amount * rate, other_currency
-    end
-
-    def exchange_rate_to to
-      from = currency.code
-      return 1 if from == to
-      exchange.rate from, to
     end
 
     %w(+ - * /).each do |op|

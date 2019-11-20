@@ -8,7 +8,9 @@ module Danconia
       end
 
       def rate from, to
-        if from == 'USD' and direct_rate = @store.direct_rate(from, to)
+        if from == to
+          1.0
+        elsif from == 'USD' and direct_rate = @store.direct_rate(from, to)
           direct_rate
         elsif to == 'USD' and inverse_rate = @store.direct_rate(to, from)
           (1.0 / inverse_rate).round 6
