@@ -39,7 +39,7 @@ module Danconia
       end
 
       it 'should exchange the other currency if it is different' do
-        expect(Money(1, 'ARS') + Money(1, 'USD', exchange: fake_exchange(rate: 4))).to eq Money(5, 'ARS')
+        expect(Money(1, 'ARS', exchange: fake_exchange(rate: 4)) + Money(1, 'USD')).to eq Money(5, 'ARS')
       end
 
       it 'should return a new object with the same options' do
@@ -121,15 +121,27 @@ module Danconia
     end
 
     context 'exchange_to' do
-      it 'should use the exchange passed to the instance to get the rate' do
-        expect(Money(2, 'USD', exchange: fake_exchange(rate: 3)).exchange_to('ARS')).to eq Money(6, 'ARS')
-      end
-
-      it 'should use the default exchange if not set' do
+      it 'should use a default exchange if not overriden' do
         TestHelpers.with_rates 'USDEUR' => 3, 'USDARS' => 4 do
           expect(Money(2, 'USD').exchange_to('EUR')).to eq Money(6, 'EUR')
           expect(Money(2, 'USD').exchange_to('ARS')).to eq Money(8, 'ARS')
         end
+      end
+
+      it 'should allow to pass the exchange to the instance' do
+        expect(Money(2, 'USD', exchange: fake_exchange(rate: 3)).exchange_to('ARS')).to eq Money(6, 'ARS')
+      end
+
+      it 'should allow to pass the exchange when converting' do
+        expect(Money(2, 'USD').exchange_to('ARS', exchange: fake_exchange(rate: 4))).to eq Money(8, 'ARS')
+      end
+
+      it 'when overriding the exchange, should preserve it in the new instances' do
+        m1 = Money(1, 'USD').exchange_to('ARS', exchange: fake_exchange(rate: 2))
+        m2 = m1 + Money(3, 'USD')
+        m3 = m2 * Money(1, 'USD')
+        expect(m2).to eq Money(8, 'ARS')
+        expect(m3).to eq Money(16, 'ARS')
       end
 
       it 'if no rate if found should raise error' do
@@ -178,7 +190,7 @@ module Danconia
     end
 
     def fake_exchange args = {}
-      double 'exchange', args.reverse_merge(rate: nil)
+      double 'Danconia::Exchanges::Exchange', args.reverse_merge(rate: nil)
     end
   end
 end

@@ -45,17 +45,17 @@ module Danconia
       amount <=> other
     end
 
-    def exchange_to other_currency
+    def exchange_to other_currency, exchange: @exchange
       other_currency = other_currency.presence && Currency.find(other_currency, exchange) || currency
       rate = exchange.rate currency.code, other_currency.code
-      clone_with amount * rate, other_currency
+      clone_with amount * rate, other_currency, exchange
     end
 
     %w(+ - * /).each do |op|
       class_eval <<-EOR, __FILE__, __LINE__ + 1
         def #{op} other
-          other = other.exchange_to(currency).amount if other.is_a? Money
-          clone_with amount #{op} other
+          other = other.exchange_to(currency, exchange: @exchange).amount if other.is_a? Money
+          clone_with(amount #{op} other)
         end
       EOR
     end
@@ -94,7 +94,7 @@ module Danconia
       BigDecimal(object.to_s) rescue BigDecimal(0)
     end
 
-    def clone_with amount, currency = @currency
+    def clone_with amount, currency = @currency, exchange = @exchange
       Money.new amount, currency, decimals: decimals, exchange: exchange
     end
   end
