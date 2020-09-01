@@ -37,6 +37,23 @@ module Danconia
           FixedRates.new(rates: rates)
         end
       end
+
+      context 'update_rates!' do
+        it 'fetches the rates and stores them' do
+          expect(subject).to receive(:fetch_rates) { {'USDARS' => 3, 'USDAUD' => 4} }
+          subject.update_rates!
+          expect(subject.store.rates.size).to eq 2
+          expect(subject.rate('USD', 'ARS')).to eq 3
+          expect(subject.rate('USD', 'AUD')).to eq 4
+        end
+
+        it 'if a rate already exists should update it' do
+          subject.store.save_rates 'USDARS' => 3
+          expect(subject).to receive(:fetch_rates) { {'USDARS' => 3.1} }
+          subject.update_rates!
+          expect(subject.rate('USD', 'ARS')).to eq 3.1
+        end
+      end
     end
   end
 end
