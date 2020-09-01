@@ -162,6 +162,21 @@ module Danconia
         expect(Money(1, 'USD').exchange_to('')).to eq Money(1, 'USD')
         expect(Money(1, 'ARS').exchange_to('')).to eq Money(1, 'ARS')
       end
+
+      it 'allows to specify opts to pass to the exchange (filters for example)' do
+        exchange = Class.new(Exchanges::Exchange) do
+          def rates opts
+            case opts[:type]
+            when 'divisa' then {'USDARS' => 7}
+            when 'billete' then {'USDARS' => 8}
+            else {}
+            end
+          end
+        end.new
+
+        expect(Money(1, 'USD').exchange_to('ARS', type: 'divisa', exchange: exchange)).to eq Money(7, 'ARS')
+        expect { Money(1, 'USD').exchange_to('ARS', exchange: exchange) }.to raise_error Errors::ExchangeRateNotFound
+      end
     end
 
     context 'default_currency?' do

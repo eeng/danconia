@@ -11,7 +11,7 @@ module Danconia
         @store = store
       end
 
-      def rates
+      def rates _opts
         @store.rates
       end
 

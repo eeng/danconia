@@ -45,9 +45,9 @@ module Danconia
       amount <=> other
     end
 
-    def exchange_to other_currency, exchange: @exchange
+    def exchange_to other_currency, exchange: @exchange, **opts
       other_currency = other_currency.presence && Currency.find(other_currency, exchange) || currency
-      rate = exchange.rate currency.code, other_currency.code
+      rate = exchange.rate currency.code, other_currency.code, **opts
       clone_with amount * rate, other_currency, exchange
     end
 

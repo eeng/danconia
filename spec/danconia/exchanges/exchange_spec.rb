@@ -31,6 +31,20 @@ module Danconia
           expect { fake_exchange({}).rate('USD', 'EUR') }.to raise_error Errors::ExchangeRateNotFound
         end
 
+        it 'should allow to pass options to filter the rates' do
+          exchange = Class.new(Exchanges::Exchange) do
+            def rates type:
+              case type
+              when 'divisa' then {'USDARS' => 7}
+              when 'billete' then {'USDARS' => 8}
+              end
+            end
+          end.new
+
+          expect(exchange.rate('USD', 'ARS', type: 'divisa')).to eq 7
+          expect(exchange.rate('USD', 'ARS', type: 'billete')).to eq 8
+        end
+
         def fake_exchange(rates)
           FixedRates.new(rates: rates)
         end
