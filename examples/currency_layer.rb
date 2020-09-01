@@ -1,6 +1,4 @@
 # Remember to supply your CurrencyLayer key in the ACCESS_KEY environment variable to run this example
-require 'danconia'
-
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 
 ActiveRecord::Schema.define do

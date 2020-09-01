@@ -1,5 +1,3 @@
-require 'danconia'
-
 # USD is the default currency if no configuration is provided
 puts (Money(10.25) / 2).inspect # => 5.125 USD
 puts (Money(10.25) / 2).to_s # => $5.13

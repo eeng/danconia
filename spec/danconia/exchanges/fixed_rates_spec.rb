@@ -10,10 +10,6 @@ module Danconia
           expect(exchange.rate 'USD', 'ARS').to eq 4
         end
 
-        it 'returns nil if not found' do
-          expect { subject.rate 'USD', 'EUR' }.to raise_error Errors::ExchangeRateNotFound
-        end
-
         it 'if the direct conversion is not found, tries to find the inverse' do
           exchange = FixedRates.new rates: {'USDEUR' => 3}
           expect(exchange.rate 'EUR', 'USD').to eq (1.0 / 3).round 6
@@ -23,6 +19,10 @@ module Danconia
           exchange = FixedRates.new rates: {'USDEUR' => 3, 'USDARS' => 6}
           expect(exchange.rate 'EUR', 'ARS').to be_within(0.00001).of 2
           expect(exchange.rate 'ARS', 'EUR').to be_within(0.00001).of 0.5
+        end
+
+        it 'raises an error if the conversion cannot be made' do
+          expect { subject.rate 'USD', 'EUR' }.to raise_error Errors::ExchangeRateNotFound
         end
       end
     end
