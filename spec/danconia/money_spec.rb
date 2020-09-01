@@ -164,7 +164,7 @@ module Danconia
       end
 
       it 'allows to specify opts to pass to the exchange (filters for example)' do
-        exchange = Class.new(Exchanges::Exchange) do
+        exchange = Class.new(Exchange) do
           def rates opts
             case opts[:type]
             when 'divisa' then {'USDARS' => 7}
@@ -203,7 +203,7 @@ module Danconia
     end
 
     def fake_exchange args = {}
-      double 'Danconia::Exchanges::Exchange', args.reverse_merge(rate: nil)
+      double 'Danconia::Exchange', args.reverse_merge(rate: nil)
     end
   end
 end

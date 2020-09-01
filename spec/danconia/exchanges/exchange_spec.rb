@@ -32,7 +32,7 @@ module Danconia
         end
 
         it 'should allow to pass options to filter the rates' do
-          exchange = Class.new(Exchanges::Exchange) do
+          exchange = Class.new(Exchange) do
             def rates type:
               case type
               when 'divisa' then {'USDARS' => 7}

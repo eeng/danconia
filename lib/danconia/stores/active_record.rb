@@ -1,5 +1,7 @@
 module Danconia
   module Stores
+    # Simple Store implementation that persist the rates using ActiveRecord.
+    # Only stores current rates.
     class ActiveRecord
       def save_rates rates
         ExchangeRate.transaction do

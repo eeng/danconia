@@ -51,13 +51,13 @@ module Danconia
       clone_with amount * rate, other_currency, exchange
     end
 
-    %w(+ - * /).each do |op|
-      class_eval <<-EOR, __FILE__, __LINE__ + 1
+    %w[+ - * /].each do |op|
+      class_eval <<-RUBY, __FILE__, __LINE__ + 1
         def #{op} other
           other = other.exchange_to(currency, exchange: @exchange).amount if other.is_a? Money
           clone_with(amount #{op} other)
         end
-      EOR
+      RUBY
     end
 
     def round *args
