@@ -1,4 +1,9 @@
+# Example using CurrencyLayer API and storing current rates in ActiveRecord.
 # Remember to supply your CurrencyLayer key in the ACCESS_KEY environment variable to run this example
+
+require 'danconia/integrations/active_record'
+require 'danconia/exchanges/currency_layer'
+
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 

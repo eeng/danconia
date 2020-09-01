@@ -1,4 +1,5 @@
 require 'active_record'
+require 'danconia/stores/active_record'
 
 module Danconia
   module Integrations

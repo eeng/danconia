@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     danconia (0.2.9)
-      activerecord (>= 3.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -97,6 +96,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord (>= 3.0.0)
   danconia!
   guard
   guard-rspec

@@ -1,5 +1,6 @@
 require 'danconia'
 require 'danconia/test_helpers'
+require 'danconia/integrations/active_record'
 require 'webmock/rspec'
 
 Dir["#{__dir__}/support/*.rb"].each { |f| require f }

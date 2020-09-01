@@ -1,13 +1,22 @@
 require 'danconia/errors/api_error'
+require 'danconia/stores/in_memory'
 require 'net/http'
 require 'json'
 
 module Danconia
   module Exchanges
     class CurrencyLayer < Exchange
-      def initialize access_key:, **args
-        super args
+      def initialize access_key:, store: Stores::InMemory.new
         @access_key = access_key
+        @store = store
+      end
+
+      def rates
+        @store.rates
+      end
+
+      def update_rates!
+        @store.save_rates fetch_rates
       end
 
       def fetch_rates

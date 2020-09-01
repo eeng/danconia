@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module Danconia
   describe Integrations::ActiveRecord, active_record: true do
     context 'single currency' do

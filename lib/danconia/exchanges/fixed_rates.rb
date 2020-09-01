@@ -1,13 +1,11 @@
 module Danconia
   module Exchanges
     class FixedRates < Exchange
-      def initialize rates: {}, **args
-        super args
+      def initialize rates: {}
         @rates = rates
-        update_rates!
       end
 
-      def fetch_rates
+      def rates
         @rates
       end
     end

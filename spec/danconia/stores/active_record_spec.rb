@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module Danconia
   module Stores
     describe ActiveRecord, active_record: true do

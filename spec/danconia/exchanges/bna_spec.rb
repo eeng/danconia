@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'danconia/exchanges/bna'
 
 module Danconia
@@ -19,13 +18,12 @@ module Danconia
 
         it 'raise error if cannot parse the document' do
           stub_request(:get, 'https://www.bna.com.ar/Personas').to_return body: 'some invalid html'
-
           expect { subject.fetch_rates }.to raise_error Errors::APIError
         end
-      end
 
-      def fixture file
-        File.read("#{__dir__}/fixtures/bna/#{file}")
+        def fixture file
+          File.read("#{__dir__}/fixtures/bna/#{file}")
+        end
       end
     end
   end

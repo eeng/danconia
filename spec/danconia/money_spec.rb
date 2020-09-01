@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module Danconia
   describe Money do
     context 'instantiation' do

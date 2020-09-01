@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module Danconia
   module Exchanges
     describe Exchange do
@@ -30,28 +28,11 @@ module Danconia
         end
 
         it 'raises an error if the conversion cannot be made' do
-          expect { subject.rate('USD', 'EUR') }.to raise_error Errors::ExchangeRateNotFound
+          expect { fake_exchange({}).rate('USD', 'EUR') }.to raise_error Errors::ExchangeRateNotFound
         end
 
         def fake_exchange(rates)
           FixedRates.new(rates: rates)
-        end
-      end
-
-      context 'update_rates!' do
-        it 'fetches the rates and stores them' do
-          expect(subject).to receive(:fetch_rates) { {'USDARS' => 3, 'USDAUD' => 4} }
-          subject.update_rates!
-          expect(subject.store.rates.size).to eq 2
-          expect(subject.rate('USD', 'ARS')).to eq 3
-          expect(subject.rate('USD', 'AUD')).to eq 4
-        end
-
-        it 'if a rate already exists should update it' do
-          subject.store.save_rates 'USDARS' => 3
-          expect(subject).to receive(:fetch_rates) { {'USDARS' => 3.1} }
-          subject.update_rates!
-          expect(subject.rate('USD', 'ARS')).to eq 3.1
         end
       end
     end
