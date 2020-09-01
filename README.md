@@ -33,6 +33,8 @@ To handle multiple currencies you need to configure an `Exchange` in order to fe
 
 ```ruby
 # This can be placed in a Rails initializer
+require 'danconia/exchanges/currency_layer'
+
 Danconia.configure do |config|
   config.default_exchange = Danconia::Exchanges::CurrencyLayer.new(access_key: '...')
 end
@@ -56,6 +58,8 @@ By default, rates are stored in memory, but you can supply a store in the exchan
 Given a `products` table with a decimal column `price` and a string column `price_currency` (optional), then you can use the `money` class method to automatically convert it to Money:
 
 ```ruby
+require 'danconia/integrations/active_record'
+
 class Product < ActiveRecord::Base
   money :price
 end
