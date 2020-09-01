@@ -1,3 +1,6 @@
+require 'active_support'
+require 'active_support/core_ext/object/blank'
+
 require 'danconia/version'
 require 'danconia/config'
 require 'danconia/currency'
