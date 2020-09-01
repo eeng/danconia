@@ -1,4 +1,5 @@
 # Remember to supply your CurrencyLayer key in the ACCESS_KEY environment variable to run this example
+ActiveRecord::Base.logger = Logger.new(STDOUT)
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 
 ActiveRecord::Schema.define do
