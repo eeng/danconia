@@ -9,10 +9,6 @@ module Danconia
         end
       end
 
-      def direct_rate from, to
-        ExchangeRate.find_by(pair: [from, to].join)&.rate
-      end
-
       def rates
         Hash[ExchangeRate.all.map { |er| [er.pair, er.rate] }]
       end

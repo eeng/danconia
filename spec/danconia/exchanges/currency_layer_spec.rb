@@ -38,7 +38,7 @@ module Danconia
         it 'fetches the rates and stores them' do
           expect(subject).to receive(:fetch_rates) { {'USDARS' => 3, 'USDAUD' => 4} }
           subject.update_rates!
-          expect(subject.rates.size).to eq 2
+          expect(subject.store.rates.size).to eq 2
           expect(subject.rate('USD', 'ARS')).to eq 3
           expect(subject.rate('USD', 'AUD')).to eq 4
         end

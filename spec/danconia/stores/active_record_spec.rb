@@ -11,11 +11,11 @@ module Danconia
         end
       end
 
-      context '#direct_rate' do
-        it 'should find the rate for the pair' do
+      context 'rates' do
+        it 'returns a hash with rate by pair' do
           ExchangeRate.create! pair: 'USDEUR', rate: 2
-          expect(subject.direct_rate('USD', 'EUR')).to eq 2
-          expect(subject.direct_rate('USD', 'ARS')).to eq nil
+          ExchangeRate.create! pair: 'USDARS', rate: 40
+          expect(subject.rates).to eq('USDEUR' => 2, 'USDARS' => 40)
         end
       end
 

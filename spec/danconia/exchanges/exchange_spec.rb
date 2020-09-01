@@ -15,10 +15,18 @@ module Danconia
           expect(exchange.rate('EUR', 'USD')).to be_within(0.00001).of(1.0 / 3)
         end
 
-        it 'if not direct nor inverse conversion is found and both are different than USD, tries to convert through USD' do
+        it 'if not direct nor inverse conversion is found, tries to convert through USD' do
           exchange = fake_exchange('USDEUR' => 3, 'USDARS' => 6)
           expect(exchange.rate('EUR', 'ARS')).to be_within(0.00001).of 2
           expect(exchange.rate('ARS', 'EUR')).to be_within(0.00001).of 0.5
+        end
+
+        it 'pairs can have a different common currency' do
+          exchange = fake_exchange('EURARS' => 3, 'BRLARS' => 1.5)
+          expect(exchange.rate('EUR', 'ARS')).to eq 3
+          expect(exchange.rate('ARS', 'EUR')).to be_within(0.00001).of(1.0 / 3)
+          expect(exchange.rate('BRL', 'ARS')).to eq 1.5
+          expect(exchange.rate('EUR', 'BRL')).to eq 3 / 1.5
         end
 
         it 'raises an error if the conversion cannot be made' do
