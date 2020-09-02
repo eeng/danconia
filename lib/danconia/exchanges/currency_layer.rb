@@ -1,22 +1,17 @@
 require 'danconia/errors/api_error'
-require 'danconia/stores/in_memory'
 require 'net/http'
 require 'json'
 
 module Danconia
   module Exchanges
+    # Fetches the rates from https://currencylayer.com/. The `access_key` must be provided.
+    # See `examples/currency_layer.rb` for a complete usage example.
     class CurrencyLayer < Exchange
+      attr_reader :store
+
       def initialize access_key:, store: Stores::InMemory.new
         @access_key = access_key
         @store = store
-      end
-
-      def rates **_opts
-        Hash[@store.rates.map { |er| er.values_at(:pair, :rate) }]
-      end
-
-      def update_rates!
-        @store.save_rates fetch_rates.map { |pair, rate| {pair: pair, rate: rate} }
       end
 
       def fetch_rates
@@ -26,6 +21,14 @@ module Danconia
         else
           raise Errors::APIError, response
         end
+      end
+
+      def update_rates!
+        @store.save_rates fetch_rates.map { |pair, rate| {pair: pair, rate: rate} }
+      end
+
+      def rates **_opts
+        Hash[@store.rates.map { |er| er.values_at(:pair, :rate) }]
       end
     end
   end

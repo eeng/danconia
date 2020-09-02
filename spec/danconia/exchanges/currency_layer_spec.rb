@@ -27,22 +27,21 @@ module Danconia
 
       context 'update_rates!' do
         it 'fetches the rates and stores them' do
-          store = instance_double('store')
-          exchange = CurrencyLayer.new(access_key: '...', store: store)
-
-          expect(exchange).to receive(:fetch_rates).and_return('USDARS' => 3, 'USDAUD' => 4)
+          store = double('store')
           expect(store).to receive(:save_rates).with([{pair: 'USDARS', rate: 3}, {pair: 'USDAUD', rate: 4}])
 
+          exchange = CurrencyLayer.new(access_key: '...', store: store)
+          allow(exchange).to receive(:fetch_rates).and_return('USDARS' => 3, 'USDAUD' => 4)
           exchange.update_rates!
         end
       end
 
       context 'rates' do
         it 'converts the array from the store back to a map of pair to rates' do
-          store = instance_double('store')
-          exchange = CurrencyLayer.new(access_key: '...', store: store)
-
+          store = double('store')
           expect(store).to receive(:rates).and_return([{pair: 'USDARS', rate: 3}, {pair: 'USDAUD', rate: 4}])
+
+          exchange = CurrencyLayer.new(access_key: '...', store: store)
           expect(exchange.rates).to eq 'USDARS' => 3, 'USDAUD' => 4
         end
       end

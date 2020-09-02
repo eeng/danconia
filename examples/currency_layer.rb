@@ -1,4 +1,4 @@
-# Example using CurrencyLayer API and storing current rates in ActiveRecord.
+# Example using CurrencyLayer API and storing only the latests rates in ActiveRecord.
 # Remember to supply your CurrencyLayer key in the ACCESS_KEY environment variable to run this example
 
 require 'danconia/integrations/active_record'
@@ -23,8 +23,8 @@ Danconia.configure do |config|
   )
 end
 
-# Periodically call this method to keep rates up to date
-puts 'Updating dates with CurrencyLayer API...'
+# Periodically call this method to keep the rates up to date
+puts 'Updating rates...'
 Danconia.config.default_exchange.update_rates!
 
 puts Money(1, 'USD').exchange_to('EUR').inspect # => 0.854896 EUR

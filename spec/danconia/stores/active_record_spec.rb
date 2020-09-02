@@ -7,6 +7,7 @@ module Danconia
             t.string :pair, limit: 6
             t.decimal :rate, precision: 12, scale: 6
             t.string :rate_type
+            t.date :date
           end
         end
       end
@@ -39,6 +40,10 @@ module Danconia
             include(pair: 'USDARS', rate: 4, rate_type: 'divisas')
           ]
         end
+
+        it 'ignores fields not present in the database table' do
+          subject.save_rates [{pair: 'USDEUR', rate: 3, non_existant: 'ignoreme'}]
+        end
       end
 
       context 'rates' do
@@ -50,6 +55,19 @@ module Danconia
             include(pair: 'USDEUR', rate: 2),
             include(pair: 'USDARS', rate: 40)
           ]
+        end
+
+        it 'allows to pass filters' do
+          store = ActiveRecord.new(unique_keys: %i[pair date])
+
+          store.save_rates [
+            {pair: 'USDEUR', rate: 10, date: Date.new(2020, 1, 1)},
+            {pair: 'USDEUR', rate: 20, date: Date.new(2020, 1, 2)},
+            {pair: 'USDEUR', rate: 30, date: Date.new(2020, 1, 3)}
+          ]
+
+          expect(store.rates.size).to eq 3
+          expect(store.rates(date: Date.new(2020, 1, 2))).to match [include(rate: 20)]
         end
       end
     end
