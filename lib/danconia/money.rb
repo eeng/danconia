@@ -6,11 +6,12 @@ module Danconia
     include Comparable
     attr_reader :amount, :currency, :decimals, :exchange
 
-    def initialize amount, currency_code = nil, decimals: 2, exchange: Danconia.config.default_exchange
-      @decimals = decimals
+    def initialize(amount, currency_code = nil, decimals: 2, exchange: nil, exchange_opts: {})
       @amount = parse amount
+      @decimals = decimals
       @currency = Currency.find(currency_code || Danconia.config.default_currency, exchange)
-      @exchange = exchange
+      @exchange = exchange || Danconia.config.default_exchange
+      @exchange_opts = exchange_opts
     end
 
     def format decimals: @decimals, **other_options
@@ -41,21 +42,20 @@ module Danconia
     end
 
     def <=> other
-      other = other.exchange_to(currency).amount if other.is_a? Money
-      amount <=> other
+      amount <=> amount_exchanged_to_this_currency(other)
     end
 
     def exchange_to other_currency, exchange: @exchange, **opts
+      opts = opts.presence || @exchange_opts
       other_currency = other_currency.presence && Currency.find(other_currency, exchange) || currency
-      rate = exchange.rate currency.code, other_currency.code, **opts
-      clone_with amount * rate, other_currency, exchange
+      rate = exchange.rate currency.code, other_currency.code, opts
+      clone_with amount * rate, other_currency, exchange, opts
     end
 
     %w[+ - * /].each do |op|
       class_eval <<-RUBY, __FILE__, __LINE__ + 1
         def #{op} other
-          other = other.exchange_to(currency, exchange: @exchange).amount if other.is_a? Money
-          clone_with(amount #{op} other)
+          clone_with(amount #{op} amount_exchanged_to_this_currency(other))
         end
       RUBY
     end
@@ -94,8 +94,16 @@ module Danconia
       BigDecimal(object.to_s) rescue BigDecimal(0)
     end
 
-    def clone_with amount, currency = @currency, exchange = @exchange
-      Money.new amount, currency, decimals: decimals, exchange: exchange
+    def clone_with amount, currency = @currency, exchange = @exchange, exchange_opts = @exchange_opts
+      Money.new amount, currency, decimals: @decimals, exchange: exchange, exchange_opts: exchange_opts
+    end
+
+    def amount_exchanged_to_this_currency other
+      if other.is_a? Money
+        other.exchange_to(currency, exchange: @exchange, **@exchange_opts).amount
+      else
+        other
+      end
     end
   end
 end

@@ -70,7 +70,7 @@ module Danconia
       end
 
       it 'should exchange to the source currency if they differ' do
-        TestHelpers.with_rates 'USDARS' => 4 do |config|
+        TestHelpers.with_rates 'USDARS' => 4 do |_config|
           expect(Money(3, 'ARS') < Money(1, 'USD')).to be true
           expect(Money(4, 'ARS') < Money(1, 'USD')).to be false
         end
@@ -163,19 +163,36 @@ module Danconia
         expect(Money(1, 'ARS').exchange_to('')).to eq Money(1, 'ARS')
       end
 
-      it 'allows to specify opts to pass to the exchange (filters for example)' do
-        exchange = Class.new(Exchange) do
-          def rates opts
-            case opts[:type]
-            when 'divisa' then {'USDARS' => 7}
-            when 'billete' then {'USDARS' => 8}
-            else {}
+      context 'opts' do
+        let(:exchange) do
+          Class.new(Exchange) do
+            def rates opts
+              case opts[:type]
+              when 'divisa' then {'USDARS' => 7}
+              when 'billete' then {'USDARS' => 8}
+              else {}
+              end
             end
-          end
-        end.new
+          end.new
+        end
 
-        expect(Money(1, 'USD').exchange_to('ARS', type: 'divisa', exchange: exchange)).to eq Money(7, 'ARS')
-        expect { Money(1, 'USD').exchange_to('ARS', exchange: exchange) }.to raise_error Errors::ExchangeRateNotFound
+        it 'allows to specify opts to pass to the exchange (filters for example)' do
+          expect(Money(1, 'USD').exchange_to('ARS', type: 'divisa', exchange: exchange)).to eq Money(7, 'ARS')
+          expect { Money(1, 'USD').exchange_to('ARS', exchange: exchange) }.to raise_error Errors::ExchangeRateNotFound
+        end
+
+        it 'should be preserved after operations' do
+          m1 = Money(1, 'USD').exchange_to('ARS', type: 'divisa', exchange: exchange)
+          m2 = m1 + Money(2, 'USD')
+
+          expect(m2).to eq Money(21, 'ARS')
+          expect(m1 < Money(2, 'USD')).to eq true
+        end
+
+        it 'should use the instance exchange_opts by default' do
+          m = Money(1, 'USD', exchange: exchange, exchange_opts: {type: 'billete'})
+          expect(m.exchange_to('ARS')).to eq Money(8, 'ARS')
+        end
       end
     end
 

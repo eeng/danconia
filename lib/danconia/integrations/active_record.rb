@@ -14,7 +14,7 @@ module Danconia
             amount_column = attr_name
             currency_column = "#{attr_name}_currency"
 
-            class_eval <<-EOR, __FILE__, __LINE__ + 1
+            class_eval <<-RUBY, __FILE__, __LINE__ + 1
               def #{attr_name}= value
                 write_attribute :#{amount_column}, value.is_a?(Money) ? value.amount : value
                 write_attribute :#{currency_column}, value.currency.code if respond_to?(:#{currency_column}) && value.is_a?(Money)
@@ -26,7 +26,7 @@ module Danconia
                 decimals = self.class.columns.detect { |c| c.name == '#{amount_column}' }.scale
                 Money.new amount, currency, decimals: decimals if amount
               end
-            EOR
+            RUBY
           end
         end
       end
