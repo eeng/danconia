@@ -12,7 +12,7 @@ module Danconia
 
     # Override this method in subclasses. Should return a map of pairs to rates.
     # See `FixedRates` for an example implementation.
-    def rates _opts
+    def rates **_opts
       raise NotImplementedError
     end
 

@@ -11,12 +11,12 @@ module Danconia
         @store = store
       end
 
-      def rates _opts
-        @store.rates
+      def rates **_opts
+        Hash[@store.rates.map { |er| er.values_at(:pair, :rate) }]
       end
 
       def update_rates!
-        @store.save_rates fetch_rates
+        @store.save_rates fetch_rates.map { |pair, rate| {pair: pair, rate: rate} }
       end
 
       def fetch_rates
