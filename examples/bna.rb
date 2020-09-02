@@ -19,7 +19,7 @@ end
 
 Danconia.configure do |config|
   config.default_exchange = Danconia::Exchanges::BNA.new(
-    store: Danconia::Stores::ActiveRecord.new(unique_keys: %i[date pair rate_type])
+    store: Danconia::Stores::ActiveRecord.new(unique_keys: %i[date pair rate_type], date_field: :date)
   )
 end
 
@@ -27,5 +27,9 @@ end
 puts 'Updating rates...'
 Danconia.config.default_exchange.update_rates!
 
+# Uses the latest rate
 puts Money(1, 'USD').exchange_to('ARS', rate_type: 'billetes').inspect
 puts Money(1, 'USD').exchange_to('ARS', rate_type: 'divisas').inspect
+
+# Raises Danconia::Errors::ExchangeRateNotFound as there is no rate for that date
+# Money(1, 'USD').exchange_to('ARS', rate_type: 'billetes', date: Date.new(2000))

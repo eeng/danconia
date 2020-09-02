@@ -2,8 +2,11 @@ module Danconia
   module Stores
     # Store implementation that persist rates using ActiveRecord.
     class ActiveRecord
-      def initialize unique_keys: %i[pair]
+      # @param unique_keys [Array] each save_rates will update records with this keys' values
+      # @param date_field [Symbol] used when storing daily rates
+      def initialize unique_keys: %i[pair], date_field: nil
         @unique_keys = unique_keys
+        @date_field = date_field
       end
 
       # Creates or updates the rates by the `unique_keys` provided in the constructor.
@@ -22,7 +25,19 @@ module Danconia
 
       # Returns an array of maps like the one it received.
       def rates **filters
-        ExchangeRate.where(filters).map { |er| er.attributes.symbolize_keys }
+        ExchangeRate.where(process_filters(filters)).map { |er| er.attributes.symbolize_keys }
+      end
+
+      private
+
+      def process_filters filters
+        if @date_field
+          param = filters.delete(@date_field) || Date.today
+          last_record = ExchangeRate.where(filters).where("#{@date_field} <= ?", param).order(@date_field => :desc).first
+          filters.merge(@date_field => (last_record[@date_field] if last_record))
+        else
+          filters
+        end
       end
     end
 

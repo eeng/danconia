@@ -34,5 +34,14 @@ module Danconia
         rates[from_pair] * rates[to_pair]
       end
     end
+
+    def array_of_rates_to_hash array
+      pairs = array.map { |er| er[:pair] }
+      if pairs.size != pairs.uniq.size
+        raise ArgumentError, "Exchange returned duplicate pairs. Maybe you forgot a filter?\n#{array}"
+      end
+
+      Hash[array.map { |er| er.values_at(:pair, :rate) }]
+    end
   end
 end

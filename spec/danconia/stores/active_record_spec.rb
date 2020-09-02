@@ -59,7 +59,6 @@ module Danconia
 
         it 'allows to pass filters' do
           store = ActiveRecord.new(unique_keys: %i[pair date])
-
           store.save_rates [
             {pair: 'USDEUR', rate: 10, date: Date.new(2020, 1, 1)},
             {pair: 'USDEUR', rate: 20, date: Date.new(2020, 1, 2)},
@@ -68,6 +67,31 @@ module Danconia
 
           expect(store.rates.size).to eq 3
           expect(store.rates(date: Date.new(2020, 1, 2))).to match [include(rate: 20)]
+        end
+      end
+
+      context 'special date field' do
+        let(:store) do
+          store = ActiveRecord.new(unique_keys: %i[pair date], date_field: :date)
+          store.save_rates [
+            {pair: 'USDEUR', rate: 10, date: Date.new(2000, 1, 1)},
+            {pair: 'USDEUR', rate: 20, date: Date.new(2000, 1, 2)},
+            {pair: 'USDEUR', rate: 30, date: Date.new(2000, 1, 4)}
+          ]
+          store
+        end
+
+        it 'calling #rates with a particular date when there are rates for that date' do
+          expect(store.rates(date: Date.new(2000, 1, 2))).to match [include(rate: 20)]
+        end
+
+        it 'calling #rates with a particular date when there are not rates for that date should return the previous' do
+          expect(store.rates(date: Date.new(2000, 1, 3))).to match [include(rate: 20)]
+          expect(store.rates(date: Date.new(1999, 12, 31))).to eq []
+        end
+
+        it 'calling #rates without a particular date, uses today' do
+          expect(store.rates).to match [include(rate: 30)]
         end
       end
     end

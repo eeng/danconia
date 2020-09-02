@@ -1,7 +1,6 @@
 require 'danconia/errors/api_error'
 require 'net/http'
 require 'nokogiri'
-require 'date'
 
 module Danconia
   module Exchanges
@@ -24,9 +23,8 @@ module Danconia
         @store.save_rates fetch_rates
       end
 
-      def rates rate_type:, **opts
-        rs = @store.rates(opts).select { |er| er[:rate_type] == rate_type }
-        Hash[rs.map { |er| er.values_at(:pair, :rate) }]
+      def rates rate_type:, date: nil
+        array_of_rates_to_hash @store.rates(rate_type: rate_type, date: date)
       end
 
       private

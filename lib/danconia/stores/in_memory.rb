@@ -5,8 +5,10 @@ module Danconia
         @rates = rates
       end
 
-      def rates **_opts
-        @rates
+      def rates **filters
+        @rates.select do |r|
+          filters.all? { |k, v| r[k] == v }
+        end
       end
     end
   end

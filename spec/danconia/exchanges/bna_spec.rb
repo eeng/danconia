@@ -31,20 +31,6 @@ module Danconia
           File.read("#{__dir__}/fixtures/bna/#{file}")
         end
       end
-
-      context 'rates' do
-        it 'filters rates by type' do
-          store = double('store')
-          expect(store).to receive(:rates).and_return([
-            {pair: 'USDARS', rate: 3, rate_type: 'divisas'},
-            {pair: 'USDARS', rate: 4, rate_type: 'billetes'}
-          ]).twice
-
-          exchange = BNA.new(store: store)
-          expect(exchange.rates(rate_type: 'divisas')).to eq 'USDARS' => 3
-          expect(exchange.rates(rate_type: 'billetes')).to eq 'USDARS' => 4
-        end
-      end
     end
   end
 end

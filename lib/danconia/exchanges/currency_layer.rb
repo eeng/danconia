@@ -28,7 +28,7 @@ module Danconia
       end
 
       def rates **_opts
-        Hash[@store.rates.map { |er| er.values_at(:pair, :rate) }]
+        array_of_rates_to_hash @store.rates
       end
     end
   end
