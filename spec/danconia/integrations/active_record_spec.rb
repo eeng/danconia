@@ -32,6 +32,28 @@ module Danconia
       end
     end
 
+    context 'exchange options support' do
+      let(:exchange) do
+        Class.new(Exchange) do
+          def rates rate_type:
+            case rate_type
+            when 'divisa' then {'USDARS' => 7}
+            when 'billete' then {'USDARS' => 8}
+            end
+          end
+        end.new
+      end
+
+      it 'allows to specify options that will be pass to the exchange when exchanging to other currencies' do
+        klass = Class.new(ActiveRecord::Base) do
+          self.table_name = 'products'
+          money :price, rate_type: 'divisa'
+        end
+
+        expect(klass.new(price: Money(10, 'USD')).price.exchange_to('ARS', exchange: exchange)).to eq Money(70, 'ARS')
+      end
+    end
+
     class Product < ActiveRecord::Base
       money :price, :tax, :discount, :cost
     end
