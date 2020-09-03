@@ -4,14 +4,13 @@ require 'danconia/errors/exchange_rate_not_found'
 module Danconia
   class Money
     include Comparable
-    attr_reader :amount, :currency, :decimals, :exchange
+    attr_reader :amount, :currency, :decimals
 
-    def initialize(amount, currency_code = nil, decimals: 2, exchange: nil, exchange_opts: {})
+    def initialize(amount, currency_code = nil, decimals: 2, exchange_opts: {})
       @amount = parse amount
       @decimals = decimals
       @currency = Currency.find(currency_code || Danconia.config.default_currency)
-      @exchange = exchange || Danconia.config.default_exchange
-      @exchange_opts = exchange_opts
+      @exchange_opts = exchange_opts.reverse_merge(exchange: Danconia.config.default_exchange)
     end
 
     def format decimals: @decimals, **other_options
@@ -45,11 +44,11 @@ module Danconia
       amount <=> amount_exchanged_to_this_currency(other)
     end
 
-    def exchange_to other_currency, exchange: @exchange, **opts
-      opts = opts.presence || @exchange_opts
+    def exchange_to other_currency, **opts
+      opts = @exchange_opts.merge(opts)
       other_currency = other_currency.presence && Currency.find(other_currency) || currency
-      rate = exchange.rate currency.code, other_currency.code, opts
-      clone_with amount * rate, other_currency, exchange, opts
+      rate = opts[:exchange].rate currency.code, other_currency.code, opts.except(:exchange)
+      clone_with amount * rate, other_currency, opts
     end
 
     %w[+ - * /].each do |op|
@@ -94,13 +93,13 @@ module Danconia
       BigDecimal(object.to_s) rescue BigDecimal(0)
     end
 
-    def clone_with amount, currency = @currency, exchange = @exchange, exchange_opts = @exchange_opts
-      Money.new amount, currency, decimals: @decimals, exchange: exchange, exchange_opts: exchange_opts
+    def clone_with amount, currency = @currency, exchange_opts = @exchange_opts
+      Money.new amount, currency, decimals: @decimals, exchange_opts: exchange_opts
     end
 
     def amount_exchanged_to_this_currency other
       if other.is_a? Money
-        other.exchange_to(currency, exchange: @exchange, **@exchange_opts).amount
+        other.exchange_to(currency, @exchange_opts).amount
       else
         other
       end

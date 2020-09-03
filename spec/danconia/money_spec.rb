@@ -37,16 +37,15 @@ module Danconia
       end
 
       it 'should exchange the other currency if it is different' do
-        expect(Money(1, 'ARS', exchange: fake_exchange(rate: 4)) + Money(1, 'USD')).to eq Money(5, 'ARS')
+        m1 = Money(1, 'ARS', exchange_opts: {exchange: fake_exchange(rate: 4)})
+        expect(m1 + Money(1, 'USD')).to eq Money(5, 'ARS')
       end
 
       it 'should return a new object with the same options' do
-        e = fake_exchange
-        m1 = Money(4, decimals: 3, exchange: e)
+        m1 = Money(4, decimals: 3)
         m2 = m1 * 2
         expect(m2).to_not eql m1
         expect(m2.decimals).to eq 3
-        expect(m2.exchange).to eq e
       end
 
       it 'round should return a money object with the same currency' do
@@ -127,7 +126,8 @@ module Danconia
       end
 
       it 'should allow to pass the exchange to the instance' do
-        expect(Money(2, 'USD', exchange: fake_exchange(rate: 3)).exchange_to('ARS')).to eq Money(6, 'ARS')
+        m = Money(2, 'USD', exchange_opts: {exchange: fake_exchange(rate: 3)})
+        expect(m.exchange_to('ARS')).to eq Money(6, 'ARS')
       end
 
       it 'should allow to pass the exchange when converting' do
@@ -151,8 +151,8 @@ module Danconia
       end
 
       it 'should return a new object with the same opts' do
-        m1 = Money(1, 'USD', decimals: 0, exchange: fake_exchange(rate: 3))
-        m2 = m1.exchange_to('ARS')
+        m1 = Money(1, 'USD', decimals: 0)
+        m2 = m1.exchange_to('ARS', exchange: fake_exchange(rate: 3))
         expect(m2).to_not eql m1
         expect(m2.decimals).to eq 0
         expect(m1).to eq Money(1, 'USD')
@@ -190,7 +190,7 @@ module Danconia
         end
 
         it 'should use the instance exchange_opts by default' do
-          m = Money(1, 'USD', exchange: exchange, exchange_opts: {type: 'billete'})
+          m = Money(1, 'USD', exchange_opts: {exchange: exchange, type: 'billete'})
           expect(m.exchange_to('ARS')).to eq Money(8, 'ARS')
         end
       end
