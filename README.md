@@ -1,8 +1,18 @@
 # Danconia
 
-A very simple money library for Ruby, backed by BigDecimal (no conversion to cents, i.e. "infinite precision") with support for external exchange rates services.
+A very simple money library for Ruby, backed by BigDecimal, with multi-currency support.
 
 [![Build Status](https://travis-ci.org/eeng/danconia.svg?branch=master)](https://travis-ci.org/eeng/danconia)
+
+## Features
+
+* Backed by BigDecimal (no conversion to cents is done, i.e. "infinite precision")
+* Multi-currency support
+* Pluggable exchange rates services:
+  - [CurrencyLayer API](https://currencylayer.com/)
+  - [BNA](https://www.bna.com.ar/)
+  - FixedRates (for testing use)
+* Pluggable stores for persisting the exchange rates
 
 ## Installation
 
@@ -29,7 +39,7 @@ Please refer to `examples/single_currency.rb` for some configuration options.
 
 ## Multi-Currency Support
 
-To handle multiple currencies you need to configure an `Exchange` in order to fetch the rates. For example, with [CurrencyLayer](https://currencylayer.com/):
+To handle multiple currencies you need to configure an `Exchange` in order to fetch the rates. For example, with CurrencyLayer:
 
 ```ruby
 # This can be placed in a Rails initializer
