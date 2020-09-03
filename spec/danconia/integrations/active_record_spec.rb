@@ -2,9 +2,9 @@ module Danconia
   describe Integrations::ActiveRecord, active_record: true do
     context 'single currency' do
       it 'setter' do
-        expect(Product.new(price: 1.536).read_attribute :price).to eq 1.54
-        expect(Product.new(price: nil).read_attribute :price).to eq nil
-        expect(Product.new(price: Money(3)).read_attribute :price).to eq 3
+        expect(Product.new(price: 1.536).read_attribute(:price)).to eq 1.54
+        expect(Product.new(price: nil).read_attribute(:price)).to eq nil
+        expect(Product.new(price: Money(3)).read_attribute(:price)).to eq 3
       end
 
       it 'getter' do

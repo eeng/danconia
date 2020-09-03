@@ -9,7 +9,7 @@ module Danconia
     def initialize(amount, currency_code = nil, decimals: 2, exchange: nil, exchange_opts: {})
       @amount = parse amount
       @decimals = decimals
-      @currency = Currency.find(currency_code || Danconia.config.default_currency, exchange)
+      @currency = Currency.find(currency_code || Danconia.config.default_currency)
       @exchange = exchange || Danconia.config.default_exchange
       @exchange_opts = exchange_opts
     end
@@ -47,7 +47,7 @@ module Danconia
 
     def exchange_to other_currency, exchange: @exchange, **opts
       opts = opts.presence || @exchange_opts
-      other_currency = other_currency.presence && Currency.find(other_currency, exchange) || currency
+      other_currency = other_currency.presence && Currency.find(other_currency) || currency
       rate = exchange.rate currency.code, other_currency.code, opts
       clone_with amount * rate, other_currency, exchange, opts
     end
