@@ -31,6 +31,22 @@ module Danconia
           File.read("#{__dir__}/fixtures/bna/#{file}")
         end
       end
+
+      context 'rates' do
+        it 'pass the params to the store and converts the array of rates back to hash' do
+          store = double('store')
+          expect(store).to receive(:rates)
+            .with(rate_type: 'billetes', date: nil)
+            .and_return([{pair: 'USDARS', rate: 3}])
+
+          exchange = BNA.new(store: store)
+          expect(exchange.rates(rate_type: 'billetes')).to eq 'USDARS' => 3
+        end
+
+        it 'rate_type is required' do
+          expect { BNA.new.rates }.to raise_error ArgumentError
+        end
+      end
     end
   end
 end
