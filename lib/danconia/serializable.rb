@@ -9,5 +9,9 @@ module Danconia
       @currency = Currency.find(serialized_money[:currency])
       @decimals = serialized_money[:decimals]
     end
+
+    def as_json _options = {}
+      {amount: @amount, currency: @currency.code}
+    end
   end
 end

@@ -6,6 +6,7 @@ module Danconia
   class Money
     include Comparable
     include Serializable
+
     attr_reader :amount, :currency, :decimals
 
     def initialize(amount, currency_code = nil, decimals: 2, exchange_opts: {})
@@ -69,10 +70,6 @@ module Danconia
       (self * 100).round
     end
 
-    def as_json *args
-      amount.as_json *args
-    end
-
     def default_currency?
       currency.code == Danconia.config.default_currency
     end
@@ -85,8 +82,8 @@ module Danconia
       end
     end
 
-    def respond_to? method, *args
-      super or @amount.respond_to?(method, *args)
+    def respond_to_missing? method, *args
+      @amount.respond_to?(method, *args) || super
     end
 
     private
