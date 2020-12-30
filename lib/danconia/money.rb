@@ -1,9 +1,11 @@
 require 'bigdecimal'
 require 'danconia/errors/exchange_rate_not_found'
+require 'danconia/serializable'
 
 module Danconia
   class Money
     include Comparable
+    include Serializable
     attr_reader :amount, :currency, :decimals
 
     def initialize(amount, currency_code = nil, decimals: 2, exchange_opts: {})

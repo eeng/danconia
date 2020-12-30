@@ -2,6 +2,7 @@ require 'date'
 
 require 'active_support'
 require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/hash/reverse_merge'
 
 require 'danconia/version'
 require 'danconia/config'

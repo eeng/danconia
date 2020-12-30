@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    danconia (0.3.0)
+    danconia (0.3.1)
       activesupport (>= 4.0)
 
 GEM
