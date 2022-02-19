@@ -2,7 +2,7 @@
 
 A very simple money library for Ruby, backed by BigDecimal, with multi-currency support.
 
-[![Build Status](https://travis-ci.org/eeng/danconia.svg?branch=master)](https://travis-ci.org/eeng/danconia)
+[![Build Status](https://app.travis-ci.com/eeng/danconia.svg?branch=master)](https://app.travis-ci.com/eeng/danconia)
 
 ## Features
 
